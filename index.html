@@ -1,470 +1,362 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Events Calendar</title>
-  <style>
-    :root {
-      --max: 980px;
-      --bg: #f4f6f9;
-      --card: #fff;
-      --text: #111;
-      --muted: #5f6368;
-      --line: #e6e8ee;
-      --accent: #1a73e8;
-      --radius: 16px;
-    }
-    body { margin:0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
-    .wrap { max-width: var(--max); margin: 0 auto; padding: 18px; }
-    .topbar {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: 0 6px 18px rgba(0,0,0,.08);
-      padding: 14px;
-      margin-bottom: 14px;
-    }
-    h1 { margin: 0; font-size: 20px; }
-    .sub { margin-top: 6px; color: var(--muted); font-size: 13px; }
-    .controls { display:flex; gap:10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
-    .btn {
-      border: 0;
-      background: var(--accent);
-      color: #fff;
-      font-weight: 700;
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-    .btn.secondary { background:#111; }
-    .pill {
-      border: 1px solid var(--line);
-      background: #fff;
-      border-radius: 999px;
-      padding: 8px 10px;
-      font-size: 13px;
-      color: var(--muted);
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    select, input {
-      border: 0;
-      outline: none;
-      font-size: 13px;
-      color: var(--text);
-      background: transparent;
-      width: 100%;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Events Calendar</title>
 
-    .grid { display:grid; grid-template-columns: 1fr; gap: 14px; }
-    @media (min-width: 820px) { .grid { grid-template-columns: 1fr 1fr; } }
+<style>
+:root {
+  --max: 980px;
+  --bg: #f4f6f9;
+  --card: #fff;
+  --text: #111;
+  --muted: #5f6368;
+  --line: #e6e8ee;
+  --accent: #1a73e8;
+  --radius: 16px;
+}
+body { margin:0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+.wrap { max-width: var(--max); margin: 0 auto; padding: 18px; }
+.topbar {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  padding: 14px;
+  margin-bottom: 14px;
+}
+h1 { margin: 0; font-size: 20px; }
+.sub { margin-top: 6px; color: var(--muted); font-size: 13px; }
+.controls { display:flex; gap:10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
+.btn {
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.btn.secondary { background:#111; }
+.pill {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--muted);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+select, input {
+  border: 0;
+  outline: none;
+  font-size: 13px;
+  color: var(--text);
+  background: transparent;
+}
 
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: 0 6px 18px rgba(0,0,0,.08);
-      overflow: hidden;
-    }
-    .cardhead {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--line);
-      display:flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 10px;
-    }
-    .monthTitle { font-size: 16px; font-weight: 800; }
-    .legend { color: var(--muted); font-size: 12px; }
+.grid { display:grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 820px) { .grid { grid-template-columns: 1fr 1fr; } }
 
-    .cal {
-      padding: 10px;
-      display:grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-    }
-    .dow {
-      font-size: 11px;
-      color: var(--muted);
-      text-align:center;
-      padding: 6px 0;
-    }
-    .day {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      min-height: 72px;
-      padding: 8px;
-      position: relative;
-    }
-    .day.muted { opacity: .45; }
-    .daynum { font-weight: 800; font-size: 12px; }
-    .dots { display:flex; gap:4px; flex-wrap: wrap; margin-top: 6px; }
-    .dot {
-      width: 8px; height: 8px; border-radius: 999px;
-      background: var(--accent);
-    }
-    .today { outline: 3px solid rgba(26,115,232,.25); border-color: rgba(26,115,232,.55); }
-    .list {
-      padding: 12px 14px;
-    }
-    .event {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 10px;
-      cursor: pointer;
-    }
-    .event:hover { border-color: rgba(26,115,232,.45); }
-    .etitle { font-weight: 900; margin:0 0 6px; }
-    .meta { color: var(--muted); font-size: 12px; margin: 0; }
-    .desc { margin: 8px 0 0; font-size: 13px; }
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+.cardhead {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  display:flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.monthTitle { font-size: 16px; font-weight: 800; }
 
-    /* Modal */
-    .overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.35);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
-    }
-    .overlay.show { display:flex; }
-    .modal {
-      max-width: 720px;
-      width: 100%;
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 14px 40px rgba(0,0,0,.25);
-      overflow:hidden;
-    }
-    .modalhead {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--line);
-      display:flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-    .close {
-      background: #111;
-      color: #fff;
-      border: 0;
-      border-radius: 12px;
-      padding: 10px 12px;
-      cursor:pointer;
-      font-weight: 800;
-    }
-    .modalbody { padding: 14px 16px; }
-    .modalbody h2 { margin: 0 0 8px; }
-    .small { color: var(--muted); font-size: 12px; margin-top: 10px; }
+.cal {
+  padding: 10px;
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+.dow {
+  font-size: 11px;
+  color: var(--muted);
+  text-align:center;
+  padding: 6px 0;
+}
+.day {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  min-height: 72px;
+  padding: 8px;
+  cursor:pointer;
+}
+.day.muted { opacity: .45; }
+.daynum { font-weight: 800; font-size: 12px; }
+.dots { display:flex; gap:4px; margin-top:6px; }
+.dot {
+  width: 8px; height: 8px; border-radius: 999px;
+  background: var(--accent);
+}
+.today { outline: 3px solid rgba(26,115,232,.25); border-color: rgba(26,115,232,.55); }
 
-  </style>
+.list { padding: 12px 14px; }
+.event {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+  cursor:pointer;
+}
+.event:hover { border-color: rgba(26,115,232,.45); }
+.etitle { font-weight: 900; margin:0 0 6px; }
+.meta { color: var(--muted); font-size: 12px; }
 
-  <!-- Inmar iframe auto-height helper -->
-  <script>
-    function sendHeight() {
-      const height = document.documentElement.scrollHeight;
-      window.parent.postMessage({ type: "resize", height }, "*");
-    }
-    window.addEventListener("load", sendHeight);
-    window.addEventListener("resize", sendHeight);
-    new MutationObserver(sendHeight).observe(document.documentElement, { childList: true, subtree: true });
-    setTimeout(sendHeight, 500);
-    setTimeout(sendHeight, 1500);
-  </script>
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.35);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding: 18px;
+}
+.overlay.show { display:flex; }
+.modal {
+  max-width: 720px;
+  width: 100%;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(0,0,0,.25);
+  overflow:hidden;
+}
+.modalhead {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  display:flex;
+  justify-content: space-between;
+}
+.close {
+  background: #111;
+  color: #fff;
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor:pointer;
+}
+.modalbody { padding: 14px 16px; }
+
+</style>
+
+<script>
+function sendHeight() {
+  const height = document.documentElement.scrollHeight;
+  window.parent.postMessage({ type: "resize", height }, "*");
+}
+window.addEventListener("load", sendHeight);
+window.addEventListener("resize", sendHeight);
+setTimeout(sendHeight, 500);
+setTimeout(sendHeight, 1500);
+</script>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <h1>Events Calendar</h1>
-      <div class="sub">Tap a day (dots) or an event to see details.</div>
+<div class="wrap">
 
-      <div class="controls">
-        <button class="btn secondary" id="prevBtn">◀</button>
-        <button class="btn" id="todayBtn">Today</button>
-        <button class="btn secondary" id="nextBtn">▶</button>
+<div class="topbar">
+<h1>Events Calendar</h1>
+<div class="sub">Tap a day or event to see details.</div>
 
-        <div class="pill" style="min-width:220px;">
-          <span>Store</span>
-          <select id="storeFilter" aria-label="Store Filter">
-            <option value="ALL">All stores</option>
-          </select>
-        </div>
+<div class="controls">
+<button class="btn secondary" id="prevBtn">◀</button>
+<button class="btn" id="todayBtn">Today</button>
+<button class="btn secondary" id="nextBtn">▶</button>
 
-        <div class="pill" style="min-width:260px; flex:1;">
-          <span>Search</span>
-          <input id="searchInput" placeholder="Type an event name..." />
-        </div>
-      </div>
-    </div>
+<div class="pill">
+Store
+<select id="storeFilter">
+<option value="ALL">All stores</option>
+</select>
+</div>
 
-    <div class="grid">
-      <div class="card">
-        <div class="cardhead">
-          <div class="monthTitle" id="monthTitle">Month YYYY</div>
-          <div class="legend" id="legend">• events shown as dots</div>
-        </div>
+<div class="pill">
+Search
+<input id="searchInput" placeholder="Type an event name..." />
+</div>
+</div>
+</div>
 
-        <div class="cal" id="cal">
-          <!-- DOW headers + days injected -->
-        </div>
-      </div>
+<div class="grid">
+<div class="card">
+<div class="cardhead">
+<div class="monthTitle" id="monthTitle"></div>
+</div>
+<div class="cal" id="cal"></div>
+</div>
 
-      <div class="card">
-        <div class="cardhead">
-          <div class="monthTitle">Upcoming</div>
-          <div class="legend" id="countLabel">0 events</div>
-        </div>
-        <div class="list" id="list"></div>
-      </div>
-    </div>
+<div class="card">
+<div class="cardhead">
+<div class="monthTitle">Upcoming</div>
+</div>
+<div class="list" id="list"></div>
+</div>
+</div>
 
-    <div class="small">Admin note: edit <strong>events.json</strong> in this repo to update events.</div>
-  </div>
+</div>
 
-  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Event details">
-    <div class="modal">
-      <div class="modalhead">
-        <div style="font-weight:900;">Event details</div>
-        <button class="close" id="closeBtn">Close</button>
-      </div>
-      <div class="modalbody" id="modalBody"></div>
-    </div>
-  </div>
+<div class="overlay" id="overlay">
+<div class="modal">
+<div class="modalhead">
+<strong>Event Details</strong>
+<button class="close" id="closeBtn">Close</button>
+</div>
+<div class="modalbody" id="modalBody"></div>
+</div>
+</div>
 
 <script>
-  const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  const calEl = document.getElementById("cal");
-  const listEl = document.getElementById("list");
-  const monthTitleEl = document.getElementById("monthTitle");
-  const countLabelEl = document.getElementById("countLabel");
-  const storeFilterEl = document.getElementById("storeFilter");
-  const searchInputEl = document.getElementById("searchInput");
-  const overlayEl = document.getElementById("overlay");
-  const modalBodyEl = document.getElementById("modalBody");
+const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const calEl = document.getElementById("cal");
+const listEl = document.getElementById("list");
+const monthTitleEl = document.getElementById("monthTitle");
+const storeFilterEl = document.getElementById("storeFilter");
+const searchInputEl = document.getElementById("searchInput");
 
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const todayBtn = document.getElementById("todayBtn");
-  const closeBtn = document.getElementById("closeBtn");
+let allEvents = [];
+let viewDate = new Date();
 
-  let allEvents = [];
-  let viewDate = new Date(); // month being shown
+/* -------- URL STORE AUTO DEFAULT -------- */
+const urlParams = new URLSearchParams(window.location.search);
+const storeParamRaw = urlParams.get("store") || "";
+function normalizeStore(raw) {
+  if (!raw) return "";
+  if (/^\d+$/.test(raw)) return "Store " + raw;
+  return raw;
+}
+const storeFromUrl = normalizeStore(storeParamRaw);
 
-  function pad2(n){ return String(n).padStart(2,"0"); }
+function applyStoreFromUrl() {
+  if (!storeFromUrl) return;
+  const options = Array.from(storeFilterEl.options);
+  const match = options.find(o => o.value.toLowerCase() === storeFromUrl.toLowerCase());
+  if (match) storeFilterEl.value = match.value;
+}
+/* ---------------------------------------- */
 
-  function formatDateTime(d) {
-    const dt = new Date(d);
-    const yyyy = dt.getFullYear();
-    const mm = pad2(dt.getMonth()+1);
-    const dd = pad2(dt.getDate());
-    let h = dt.getHours();
-    const m = pad2(dt.getMinutes());
-    const ampm = h >= 12 ? "PM" : "AM";
-    h = h % 12; if (h === 0) h = 12;
-    return `${mm}/${dd}/${yyyy} ${h}:${m} ${ampm}`;
+function buildStoreFilter(events){
+  const stores = [...new Set(events.map(e => e.location))].filter(Boolean).sort();
+  stores.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s;
+    opt.textContent = s;
+    storeFilterEl.appendChild(opt);
+  });
+}
+
+function formatDate(d){
+  const dt = new Date(d);
+  return dt.toLocaleString();
+}
+
+function filterEvents(){
+  const store = storeFilterEl.value;
+  const q = searchInputEl.value.toLowerCase();
+  return allEvents.filter(e => {
+    const matchStore = store === "ALL" || e.location === store;
+    const matchSearch = !q || (e.title + e.description).toLowerCase().includes(q);
+    return matchStore && matchSearch;
+  });
+}
+
+function render(){
+  const events = filterEvents();
+  monthTitleEl.textContent = viewDate.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  calEl.innerHTML = "";
+
+  DOW.forEach(d=>{
+    const el=document.createElement("div");
+    el.className="dow";
+    el.textContent=d;
+    calEl.appendChild(el);
+  });
+
+  const year=viewDate.getFullYear();
+  const month=viewDate.getMonth();
+  const first=new Date(year,month,1);
+  const startDay=first.getDay();
+  const days=new Date(year,month+1,0).getDate();
+
+  for(let i=0;i<startDay;i++){
+    const blank=document.createElement("div");
+    blank.className="day muted";
+    calEl.appendChild(blank);
   }
 
-  function startOfDay(d){ const x = new Date(d); x.setHours(0,0,0,0); return x; }
-  function sameDay(a,b){ return startOfDay(a).getTime() === startOfDay(b).getTime(); }
-
-  function monthLabel(d){
-    return d.toLocaleDateString(undefined, { month:"long", year:"numeric" });
-  }
-
-  function getFilters() {
-    const store = storeFilterEl.value;
-    const q = (searchInputEl.value || "").trim().toLowerCase();
-    return { store, q };
-  }
-
-  function applyFilters(events) {
-    const { store, q } = getFilters();
-    return events.filter(e => {
-      const matchesStore = (store === "ALL") || ((e.location || "").toLowerCase() === store.toLowerCase());
-      const blob = `${e.title||""} ${e.location||""} ${e.description||""}`.toLowerCase();
-      const matchesQ = !q || blob.includes(q);
-      return matchesStore && matchesQ;
-    });
-  }
-
-  function byStartAsc(a,b){ return new Date(a.start) - new Date(b.start); }
-
-  function eventsOnDay(events, dayDate) {
-    const dayStart = startOfDay(dayDate).getTime();
-    const dayEnd = dayStart + 24*60*60*1000;
-    return events.filter(e => {
-      const s = new Date(e.start).getTime();
-      return s >= dayStart && s < dayEnd;
-    }).sort(byStartAsc);
-  }
-
-  function buildStoreFilter(events) {
-    const stores = Array.from(new Set(events.map(e => (e.location||"").trim()).filter(Boolean))).sort();
-    // reset
-    storeFilterEl.innerHTML = `<option value="ALL">All stores</option>` +
-      stores.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
-  }
-
-  function escapeHtml(str){
-    return String(str)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  function render() {
-    const filtered = applyFilters(allEvents);
-    const year = viewDate.getFullYear();
-    const month = viewDate.getMonth();
-
-    monthTitleEl.textContent = monthLabel(viewDate);
-
-    // Calendar grid setup
-    calEl.innerHTML = "";
-    // DOW headers
-    DOW.forEach(d => {
-      const el = document.createElement("div");
-      el.className = "dow";
-      el.textContent = d;
-      calEl.appendChild(el);
+  for(let d=1;d<=days;d++){
+    const date=new Date(year,month,d);
+    const dayEvents=events.filter(e=>{
+      const ed=new Date(e.start);
+      return ed.getFullYear()===year && ed.getMonth()===month && ed.getDate()===d;
     });
 
-    const firstOfMonth = new Date(year, month, 1);
-    const startDay = firstOfMonth.getDay(); // 0..6
-    const daysInMonth = new Date(year, month+1, 0).getDate();
+    const cell=document.createElement("div");
+    cell.className="day";
+    cell.innerHTML="<div class='daynum'>"+d+"</div>";
 
-    // We’ll render 6 weeks worth for consistent layout (42 days)
-    const gridStart = new Date(year, month, 1 - startDay);
-    const today = new Date();
-
-    for (let i=0; i<42; i++){
-      const cellDate = new Date(gridStart);
-      cellDate.setDate(gridStart.getDate() + i);
-
-      const inMonth = cellDate.getMonth() === month;
-      const dayEvents = eventsOnDay(filtered, cellDate);
-
-      const cell = document.createElement("div");
-      cell.className = "day" + (inMonth ? "" : " muted") + (sameDay(cellDate, today) ? " today" : "");
-
-      const num = document.createElement("div");
-      num.className = "daynum";
-      num.textContent = cellDate.getDate();
-      cell.appendChild(num);
-
-      const dots = document.createElement("div");
-      dots.className = "dots";
-      const dotCount = Math.min(dayEvents.length, 6);
-      for (let d=0; d<dotCount; d++){
-        const dot = document.createElement("div");
-        dot.className = "dot";
+    if(dayEvents.length){
+      const dots=document.createElement("div");
+      dots.className="dots";
+      dayEvents.slice(0,5).forEach(()=>{
+        const dot=document.createElement("div");
+        dot.className="dot";
         dots.appendChild(dot);
-      }
-      cell.appendChild(dots);
-
-      cell.addEventListener("click", () => {
-        if (dayEvents.length === 0) return;
-        openModalForDay(cellDate, dayEvents);
       });
-
-      calEl.appendChild(cell);
+      cell.appendChild(dots);
+      cell.onclick=()=>openModal(dayEvents);
     }
 
-    // Upcoming list (next 60 days from today)
-    const now = new Date();
-    const horizon = new Date(now.getTime() + 60*24*60*60*1000);
-    const upcoming = filtered
-      .filter(e => new Date(e.start) >= now && new Date(e.start) <= horizon)
-      .sort(byStartAsc);
-
-    countLabelEl.textContent = `${upcoming.length} event${upcoming.length===1?"":"s"}`;
-
-    listEl.innerHTML = upcoming.length ? "" : `<div class="event"><p class="meta">No upcoming events match your filters.</p></div>`;
-    upcoming.slice(0, 20).forEach(e => {
-      const div = document.createElement("div");
-      div.className = "event";
-      div.innerHTML = `
-        <div class="etitle">${escapeHtml(e.title || "Untitled event")}</div>
-        <p class="meta">${escapeHtml(formatDateTime(e.start))}${e.location ? " • " + escapeHtml(e.location) : ""}</p>
-        ${e.description ? `<p class="desc">${escapeHtml(e.description)}</p>` : ""}
-      `;
-      div.addEventListener("click", () => openModalForEvent(e));
-      listEl.appendChild(div);
-    });
-
-    // nudge iframe height
-    if (window.parent) {
-      try {
-        const height = document.documentElement.scrollHeight;
-        window.parent.postMessage({ type: "resize", height }, "*");
-      } catch {}
-    }
+    calEl.appendChild(cell);
   }
 
-  function openModalForDay(date, dayEvents) {
-    const pretty = date.toLocaleDateString(undefined, { weekday:"long", month:"long", day:"numeric" });
-    const items = dayEvents.map(e => `
-      <div style="border:1px solid #e6e8ee; border-radius:14px; padding:12px; margin:10px 0;">
-        <div style="font-weight:900; margin-bottom:6px;">${escapeHtml(e.title || "Untitled event")}</div>
-        <div style="color:#5f6368; font-size:12px;">
-          ${escapeHtml(formatDateTime(e.start))}${e.location ? " • " + escapeHtml(e.location) : ""}
-        </div>
-        ${e.description ? `<div style="margin-top:8px; font-size:13px;">${escapeHtml(e.description)}</div>` : ""}
-      </div>
-    `).join("");
+  listEl.innerHTML="";
+  events.slice(0,10).forEach(e=>{
+    const div=document.createElement("div");
+    div.className="event";
+    div.innerHTML="<div class='etitle'>"+e.title+"</div><div class='meta'>"+formatDate(e.start)+" • "+e.location+"</div>";
+    div.onclick=()=>openModal([e]);
+    listEl.appendChild(div);
+  });
 
-    modalBodyEl.innerHTML = `
-      <h2 style="margin:0 0 8px;">${escapeHtml(pretty)}</h2>
-      <div style="color:#5f6368; font-size:12px; margin-bottom:10px;">${dayEvents.length} event${dayEvents.length===1?"":"s"}</div>
-      ${items}
-    `;
-    overlayEl.classList.add("show");
-  }
+  sendHeight();
+}
 
-  function openModalForEvent(e) {
-    modalBodyEl.innerHTML = `
-      <h2 style="margin:0 0 8px;">${escapeHtml(e.title || "Untitled event")}</h2>
-      <div style="color:#5f6368; font-size:12px;">
-        ${escapeHtml(formatDateTime(e.start))}${e.location ? " • " + escapeHtml(e.location) : ""}
-      </div>
-      ${e.description ? `<div style="margin-top:12px; font-size:14px;">${escapeHtml(e.description)}</div>` : ""}
-      <div class="small">Admin note: update this event in <strong>events.json</strong>.</div>
-    `;
-    overlayEl.classList.add("show");
-  }
+function openModal(events){
+  const modal=document.getElementById("overlay");
+  const body=document.getElementById("modalBody");
+  body.innerHTML=events.map(e=>
+    "<h3>"+e.title+"</h3><p>"+formatDate(e.start)+"</p><p>"+e.description+"</p>"
+  ).join("<hr>");
+  modal.classList.add("show");
+}
 
-  function closeModal(){ overlayEl.classList.remove("show"); }
+document.getElementById("closeBtn").onclick=()=>document.getElementById("overlay").classList.remove("show");
+storeFilterEl.onchange=render;
+searchInputEl.oninput=render;
+document.getElementById("prevBtn").onclick=()=>{viewDate.setMonth(viewDate.getMonth()-1);render();};
+document.getElementById("nextBtn").onclick=()=>{viewDate.setMonth(viewDate.getMonth()+1);render();};
+document.getElementById("todayBtn").onclick=()=>{viewDate=new Date();render();};
 
-  overlayEl.addEventListener("click", (e) => { if (e.target === overlayEl) closeModal(); });
-  closeBtn.addEventListener("click", closeModal);
-
-  prevBtn.addEventListener("click", () => { viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth()-1, 1); render(); });
-  nextBtn.addEventListener("click", () => { viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth()+1, 1); render(); });
-  todayBtn.addEventListener("click", () => { viewDate = new Date(); render(); });
-
-  storeFilterEl.addEventListener("change", render);
-  searchInputEl.addEventListener("input", render);
-
-  async function init() {
-    try {
-      const res = await fetch("./events.json", { cache: "no-store" });
-      const data = await res.json();
-      allEvents = Array.isArray(data) ? data : [];
-      allEvents = allEvents.filter(e => e && e.start && e.title);
-      buildStoreFilter(allEvents);
-      render();
-    } catch (err) {
-      listEl.innerHTML = `<div class="event"><p class="meta">Could not load events.json. Check that it exists and is valid JSON.</p></div>`;
-      render();
-    }
-  }
-
-  init();
+async function init(){
+  const res=await fetch("./events.json",{cache:"no-store"});
+  allEvents=await res.json();
+  buildStoreFilter(allEvents);
+  applyStoreFromUrl();
+  render();
+}
+init();
 </script>
 
 </body>

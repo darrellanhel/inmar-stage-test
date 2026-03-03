@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Seafood Tasting",
+    "location": "Store 12",
+    "start": "2026-03-08T17:30:00",
+    "end": "2026-03-08T19:00:00",
+    "description": "Try new crab cakes + get 10% off featured items."
+  },
+  {
+    "title": "Kids Craft Hour",
+    "location": "Store 7",
+    "start": "2026-03-14T10:00:00",
+    "end": "2026-03-14T11:30:00",
+    "description": "Free event. Supplies included while they last."
+  },
+  {
+    "title": "Weekend Grill Demo",
+    "location": "Store 5",
+    "start": "2026-03-21T12:00:00",
+    "end": "2026-03-21T14:00:00",
+    "description": "Live grilling + samples. Ask about pickup-ready bundles."
+  }
+]

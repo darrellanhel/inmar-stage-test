@@ -3,152 +3,40 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Events Calendar</title>
+<title>Inmar Store Debug Page</title>
 
 <style>
-:root {
-  --max: 980px;
-  --bg: #f4f6f9;
-  --card: #fff;
-  --text: #111;
-  --muted: #5f6368;
-  --line: #e6e8ee;
-  --accent: #1a73e8;
-  --radius: 16px;
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f4f6f9;
 }
-body { margin:0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
-.wrap { max-width: var(--max); margin: 0 auto; padding: 18px; }
-.topbar {
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: 0 6px 18px rgba(0,0,0,.08);
-  padding: 14px;
-  margin-bottom: 14px;
+.wrap {
+  max-width:900px;
+  margin:20px auto;
+  padding:20px;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
 }
-h1 { margin: 0; font-size: 20px; }
-.sub { margin-top: 6px; color: var(--muted); font-size: 13px; }
-.controls { display:flex; gap:10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
-.btn {
-  border: 0;
-  background: var(--accent);
-  color: #fff;
-  font-weight: 700;
-  padding: 10px 12px;
-  border-radius: 12px;
-  cursor: pointer;
+h1 { margin-top:0; }
+.section {
+  margin-top:20px;
+  padding:12px;
+  border:1px solid #e6e8ee;
+  border-radius:12px;
+  background:#fafafa;
 }
-.btn.secondary { background:#111; }
-.pill {
-  border: 1px solid var(--line);
-  background: #fff;
-  border-radius: 999px;
-  padding: 8px 10px;
-  font-size: 13px;
-  color: var(--muted);
-  display:flex;
-  align-items:center;
-  gap:8px;
+pre {
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-size:12px;
+  background:#111;
+  color:#0f0;
+  padding:10px;
+  border-radius:8px;
+  overflow:auto;
 }
-select, input {
-  border: 0;
-  outline: none;
-  font-size: 13px;
-  color: var(--text);
-  background: transparent;
-}
-
-.grid { display:grid; grid-template-columns: 1fr; gap: 14px; }
-@media (min-width: 820px) { .grid { grid-template-columns: 1fr 1fr; } }
-
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: 0 6px 18px rgba(0,0,0,.08);
-  overflow: hidden;
-}
-.cardhead {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--line);
-  display:flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-.monthTitle { font-size: 16px; font-weight: 800; }
-
-.cal {
-  padding: 10px;
-  display:grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-}
-.dow {
-  font-size: 11px;
-  color: var(--muted);
-  text-align:center;
-  padding: 6px 0;
-}
-.day {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  min-height: 72px;
-  padding: 8px;
-  cursor:pointer;
-}
-.day.muted { opacity: .45; }
-.daynum { font-weight: 800; font-size: 12px; }
-.dots { display:flex; gap:4px; margin-top:6px; }
-.dot {
-  width: 8px; height: 8px; border-radius: 999px;
-  background: var(--accent);
-}
-.today { outline: 3px solid rgba(26,115,232,.25); border-color: rgba(26,115,232,.55); }
-
-.list { padding: 12px 14px; }
-.event {
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px;
-  margin-bottom: 10px;
-  cursor:pointer;
-}
-.event:hover { border-color: rgba(26,115,232,.45); }
-.etitle { font-weight: 900; margin:0 0 6px; }
-.meta { color: var(--muted); font-size: 12px; }
-
-.overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.35);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding: 18px;
-}
-.overlay.show { display:flex; }
-.modal {
-  max-width: 720px;
-  width: 100%;
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 14px 40px rgba(0,0,0,.25);
-  overflow:hidden;
-}
-.modalhead {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--line);
-  display:flex;
-  justify-content: space-between;
-}
-.close {
-  background: #111;
-  color: #fff;
-  border: 0;
-  border-radius: 12px;
-  padding: 10px 12px;
-  cursor:pointer;
-}
-.modalbody { padding: 14px 16px; }
-
 </style>
 
 <script>
@@ -165,198 +53,63 @@ setTimeout(sendHeight, 1500);
 
 <body>
 <div class="wrap">
+<h1>🔎 Inmar Store Debug Page</h1>
+<p>This page is capturing everything the parent iframe sends.</p>
 
-<div class="topbar">
-<h1>Events Calendar</h1>
-<div class="sub">Tap a day or event to see details.</div>
-
-<div class="controls">
-<button class="btn secondary" id="prevBtn">◀</button>
-<button class="btn" id="todayBtn">Today</button>
-<button class="btn secondary" id="nextBtn">▶</button>
-
-<div class="pill">
-Store
-<select id="storeFilter">
-<option value="ALL">All stores</option>
-</select>
+<div class="section">
+<strong>Full URL:</strong>
+<pre id="urlOutput"></pre>
 </div>
 
-<div class="pill">
-Search
-<input id="searchInput" placeholder="Type an event name..." />
-</div>
-</div>
+<div class="section">
+<strong>Query Parameters:</strong>
+<pre id="paramsOutput"></pre>
 </div>
 
-<div class="grid">
-<div class="card">
-<div class="cardhead">
-<div class="monthTitle" id="monthTitle"></div>
-</div>
-<div class="cal" id="cal"></div>
+<div class="section">
+<strong>Document Referrer:</strong>
+<pre id="referrerOutput"></pre>
 </div>
 
-<div class="card">
-<div class="cardhead">
-<div class="monthTitle">Upcoming</div>
-</div>
-<div class="list" id="list"></div>
-</div>
+<div class="section">
+<strong>postMessage Events From Parent:</strong>
+<pre id="messageOutput">Listening...</pre>
 </div>
 
-</div>
-
-<div class="overlay" id="overlay">
-<div class="modal">
-<div class="modalhead">
-<strong>Event Details</strong>
-<button class="close" id="closeBtn">Close</button>
-</div>
-<div class="modalbody" id="modalBody"></div>
-</div>
 </div>
 
 <script>
-const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-const calEl = document.getElementById("cal");
-const listEl = document.getElementById("list");
-const monthTitleEl = document.getElementById("monthTitle");
-const storeFilterEl = document.getElementById("storeFilter");
-const searchInputEl = document.getElementById("searchInput");
+document.getElementById("urlOutput").textContent = window.location.href;
 
-let allEvents = [];
-let viewDate = new Date();
+const params = Object.fromEntries(new URLSearchParams(window.location.search));
+document.getElementById("paramsOutput").textContent =
+  Object.keys(params).length
+    ? JSON.stringify(params, null, 2)
+    : "No query parameters detected.";
 
-/* -------- URL STORE AUTO DEFAULT -------- */
-const urlParams = new URLSearchParams(window.location.search);
-const storeParamRaw = urlParams.get("store") || "";
-function normalizeStore(raw) {
-  if (!raw) return "";
-  if (/^\d+$/.test(raw)) return "Store " + raw;
-  return raw;
-}
-const storeFromUrl = normalizeStore(storeParamRaw);
+document.getElementById("referrerOutput").textContent =
+  document.referrer || "No referrer detected.";
 
-function applyStoreFromUrl() {
-  if (!storeFromUrl) return;
-  const options = Array.from(storeFilterEl.options);
-  const match = options.find(o => o.value.toLowerCase() === storeFromUrl.toLowerCase());
-  if (match) storeFilterEl.value = match.value;
-}
-/* ---------------------------------------- */
+// Listen for parent messages
+window.addEventListener("message", (event) => {
+  const output = document.getElementById("messageOutput");
 
-function buildStoreFilter(events){
-  const stores = [...new Set(events.map(e => e.location))].filter(Boolean).sort();
-  stores.forEach(s => {
-    const opt = document.createElement("option");
-    opt.value = s;
-    opt.textContent = s;
-    storeFilterEl.appendChild(opt);
-  });
-}
-
-function formatDate(d){
-  const dt = new Date(d);
-  return dt.toLocaleString();
-}
-
-function filterEvents(){
-  const store = storeFilterEl.value;
-  const q = searchInputEl.value.toLowerCase();
-  return allEvents.filter(e => {
-    const matchStore = store === "ALL" || e.location === store;
-    const matchSearch = !q || (e.title + e.description).toLowerCase().includes(q);
-    return matchStore && matchSearch;
-  });
-}
-
-function render(){
-  const events = filterEvents();
-  monthTitleEl.textContent = viewDate.toLocaleDateString(undefined,{month:"long",year:"numeric"});
-  calEl.innerHTML = "";
-
-  DOW.forEach(d=>{
-    const el=document.createElement("div");
-    el.className="dow";
-    el.textContent=d;
-    calEl.appendChild(el);
-  });
-
-  const year=viewDate.getFullYear();
-  const month=viewDate.getMonth();
-  const first=new Date(year,month,1);
-  const startDay=first.getDay();
-  const days=new Date(year,month+1,0).getDate();
-
-  for(let i=0;i<startDay;i++){
-    const blank=document.createElement("div");
-    blank.className="day muted";
-    calEl.appendChild(blank);
-  }
-
-  for(let d=1;d<=days;d++){
-    const date=new Date(year,month,d);
-    const dayEvents=events.filter(e=>{
-      const ed=new Date(e.start);
-      return ed.getFullYear()===year && ed.getMonth()===month && ed.getDate()===d;
-    });
-
-    const cell=document.createElement("div");
-    cell.className="day";
-    cell.innerHTML="<div class='daynum'>"+d+"</div>";
-
-    if(dayEvents.length){
-      const dots=document.createElement("div");
-      dots.className="dots";
-      dayEvents.slice(0,5).forEach(()=>{
-        const dot=document.createElement("div");
-        dot.className="dot";
-        dots.appendChild(dot);
-      });
-      cell.appendChild(dots);
-      cell.onclick=()=>openModal(dayEvents);
+  let formatted;
+  if (typeof event.data === "string") {
+    formatted = event.data;
+  } else {
+    try {
+      formatted = JSON.stringify(event.data, null, 2);
+    } catch {
+      formatted = "Received non-serializable message.";
     }
-
-    calEl.appendChild(cell);
   }
 
-  listEl.innerHTML="";
-  events.slice(0,10).forEach(e=>{
-    const div=document.createElement("div");
-    div.className="event";
-    div.innerHTML="<div class='etitle'>"+e.title+"</div><div class='meta'>"+formatDate(e.start)+" • "+e.location+"</div>";
-    div.onclick=()=>openModal([e]);
-    listEl.appendChild(div);
-  });
+  output.textContent =
+    "Origin: " + event.origin + "\n\n" + formatted;
 
   sendHeight();
-}
-
-function openModal(events){
-  const modal=document.getElementById("overlay");
-  const body=document.getElementById("modalBody");
-  body.innerHTML=events.map(e=>
-    "<h3>"+e.title+"</h3><p>"+formatDate(e.start)+"</p><p>"+e.description+"</p>"
-  ).join("<hr>");
-  modal.classList.add("show");
-}
-
-document.getElementById("closeBtn").onclick=()=>document.getElementById("overlay").classList.remove("show");
-storeFilterEl.onchange=render;
-searchInputEl.oninput=render;
-document.getElementById("prevBtn").onclick=()=>{viewDate.setMonth(viewDate.getMonth()-1);render();};
-document.getElementById("nextBtn").onclick=()=>{viewDate.setMonth(viewDate.getMonth()+1);render();};
-document.getElementById("todayBtn").onclick=()=>{viewDate=new Date();render();};
-
-async function init(){
-  const res=await fetch("./events.json",{cache:"no-store"});
-  allEvents=await res.json();
-  buildStoreFilter(allEvents);
-  applyStoreFromUrl();
-  render();
-}
-init();
+});
 </script>
 
 </body>

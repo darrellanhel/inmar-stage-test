@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Inmar Stage Test Page</title>
+
+<style>
+body { margin:0; font-family: Arial, sans-serif; background:#f4f6f9; }
+.wrapper { max-width:900px; margin:0 auto; padding:20px; }
+.card { background:white; padding:20px; border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,.08); margin-bottom:16px; }
+h1 { margin-top:0; }
+.btn { display:inline-block; padding:10px 14px; border-radius:10px; background:#1a73e8; color:white; text-decoration:none; font-weight:600; margin-top:10px; }
+</style>
+
+<script>
+function sendHeight() {
+  const height = document.documentElement.scrollHeight;
+  window.parent.postMessage({ type: "resize", height }, "*");
+}
+window.addEventListener("load", sendHeight);
+window.addEventListener("resize", sendHeight);
+setTimeout(sendHeight, 500);
+setTimeout(sendHeight, 1500);
+</script>
+
+</head>
+
+<body>
+<div class="wrapper">
+
+<div class="card">
+<h1>Inmar External Page Test 🚀</h1>
+<p>If you can see this inside your staging app, the iframe is working.</p>
+<a class="btn" href="#">Primary CTA</a>
+</div>
+
+<div class="card">
+<h2>Pickup Instructions</h2>
+<ol>
+<li>Park in pickup spots.</li>
+<li>Tap “I’m Here”.</li>
+<li>We bring order to your car.</li>
+</ol>
+</div>
+
+<div class="card">
+<h2>FAQ</h2>
+<p>Substitutions, refunds, coupons — this is just placeholder content.</p>
+</div>
+
+</div>
+</body>
+</html>

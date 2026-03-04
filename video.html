@@ -17,21 +17,24 @@ font-family:Arial, sans-serif;
 .banner{
 width:100%;
 height:350px;
-overflow:hidden;
 background:white;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 .banner img{
+max-width:1200px;
 width:100%;
-height:100%;
-object-fit:cover;
+height:auto;
+object-fit:contain;
 display:block;
 }
 
-/* Video wrapper (shrinks video to ~60%) */
+/* Video wrapper (smaller video) */
 
 .video-wrap{
-width:60%;
+width:30%;        /* was 60% before */
 margin:40px auto;
 }
 
@@ -60,13 +63,9 @@ border:0;
 
 <body>
 
-<!-- Banner -->
-
 <div class="banner">
 <img src="image%20(31).jpg" alt="Fresh Rewards Banner">
 </div>
-
-<!-- Video -->
 
 <div class="video-wrap">
 

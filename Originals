@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lowe's Foods Originals</title>
+
+<style>
+
+body{
+margin:0;
+font-family: Arial, sans-serif;
+background:#f6f6f6;
+text-align:center;
+}
+
+.header{
+padding:50px 20px 20px 20px;
+}
+
+.header h1{
+color:#0a5c2a;
+font-size:38px;
+margin-bottom:10px;
+}
+
+.header p{
+color:#555;
+font-size:18px;
+}
+
+.grid{
+max-width:1100px;
+margin:40px auto;
+display:grid;
+grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+gap:35px;
+padding:0 20px;
+}
+
+.card{
+text-decoration:none;
+color:#333;
+}
+
+.circle{
+width:140px;
+height:140px;
+margin:auto;
+border-radius:50%;
+background:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 3px 10px rgba(0,0,0,0.12);
+transition:all .2s ease;
+}
+
+.circle img{
+width:70%;
+}
+
+.card:hover .circle{
+transform:scale(1.08);
+box-shadow:0 8px 18px rgba(0,0,0,0.18);
+}
+
+.label{
+margin-top:12px;
+font-weight:600;
+font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>Lowe's Foods Originals</h1>
+<p>Explore the unique experiences that make Lowe's Foods different.</p>
+</div>
+
+<div class="grid">
+
+<a class="card" href="#">
+<div class="circle"><img src="beerden.png"></div>
+<div class="label">The Beer Den</div>
+</a>
+
+<a class="card" href="#">
+<div class="circle"><img src="beefshoppe.png"></div>
+<div class="label">Beef Shoppe</div>
+</a>
+
+<a class="card" href="#">
+<div class="circle"><img src="chickenkitchen.png"></div>
+<div class="label">Chicken Kitchen</div>
+</a>
+
+<a class="card" href="#">
+<div class="circle"><img src="boxcar.png"></div>
+<div class="label">Boxcar Coffee</div>
+</a>
+
+<a class="card" href="#">
+<div class="circle"><img src="sammys.png"></div>
+<div class="label">Sammy's</div>
+</a>
+
+<a class="card" href="#">
+<div class="circle"><img src="sausageworks.png"></div>
+<div class="label">SausageWorks</div>
+</a>
+
+<a class="card" href="#">
+<div class="circle"><img src="smokehouse.png"></div>
+<div class="label">Smokehouse</div>
+</a>
+
+<a class="card" href="#">
+<div class="circle"><img src="spicebazaar.png"></div>
+<div class="label">Spice Bazaar</div>
+</a>
+
+<a class="card" href="#">
+<div class="circle"><img src="cakery.png"></div>
+<div class="label">The Cakery</div>
+</a>
+
+<a class="card" href="#">
+<div class="circle"><img src="spirits.png"></div>
+<div class="label">Knock Knock Spirits</div>
+</a>
+
+<a class="card" href="#">
+<div class="circle"><img src="pickprep.png"></div>
+<div class="label">Pick & Prep</div>
+</a>
+
+</div>
+
+</body>
+</html>

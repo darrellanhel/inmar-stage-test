@@ -1,99 +1,229 @@
 <!DOCTYPE html>
 <html>
-  
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lowe's Foods Events</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Inmar auto-resize: sends height after load + after media paints + on changes -->
+  <script>
+  (function () {
+    function sendHeight() {
+      const height = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight
+      );
+      window.parent.postMessage({ type: 'resize', height }, '*');
+    }
 
-<script>
-function sendHeight() {
-  const height = document.body.scrollHeight
-  window.parent.postMessage({ type: 'resize', height }, '*')
-}
+    window.addEventListener('load', () => {
+      sendHeight();
+      setTimeout(sendHeight, 250);
+      setTimeout(sendHeight, 1000);
+      setTimeout(sendHeight, 2500);
+    });
 
-window.addEventListener('load', sendHeight)
-window.addEventListener('resize', sendHeight)
-</script>
+    window.addEventListener('resize', sendHeight);
 
-<style>
-<style>
+    if (window.ResizeObserver) {
+      new ResizeObserver(() => sendHeight()).observe(document.body);
+    } else {
+      setInterval(sendHeight, 2000);
+    }
 
-body{
-margin:0;
-background:#f5f5f5;
-font-family:Arial, sans-serif;
-}
+    // expose for carousel/manual calls
+    window.__sendInmarHeight = sendHeight;
+  })();
+  </script>
 
-/* Banner */
+  <style>
+    body{
+      margin:0;
+      background:#f5f5f5;
+      font-family:Arial, sans-serif;
+    }
 
-.banner{
-width:100%;
-display:flex;
-justify-content:center;
-background:white;
-padding-top:40px;
-padding-bottom:20px;
-}
+    /* Hero banner */
+    .banner{
+      width:100%;
+      display:flex;
+      justify-content:center;
+      background:white;
+      padding-top:40px;
+      padding-bottom:20px;
+    }
 
-.banner img{
-width:1200px;
-max-width:95%;
-height:auto;
-display:block;
-}
+    .banner img{
+      width:1200px;
+      max-width:95%;
+      height:auto;
+      display:block;
+    }
 
-/* Video wrapper */
+    /* Video wrapper (tuned to your preferred size) */
+    .video-wrap{
+      width:26%;               /* 30% larger than 20% */
+      margin:40px auto 30px auto;
+    }
 
-.video-wrap{
-width:26%;
-margin:40px auto 80px auto;
-}
+    .video{
+      position:relative;
+      width:100%;
+      padding-bottom:56.25%;
+      background:black;
+    }
 
-/* Video */
+    .video iframe{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      border:0;
+    }
 
-.video{
-position:relative;
-width:100%;
-padding-bottom:56.25%;
-background:black;
-}
+    /* Rotating steps carousel */
+    .carousel{
+      max-width: 1000px;
+      margin: 30px auto 80px auto;
+      position: relative;
+      padding: 0 16px;
+      box-sizing: border-box;
+    }
 
-.video iframe{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-border:0;
-}
+    .slide{
+      display:none;
+      width:100%;
+      border-radius:6px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    }
 
-</style>
+    .slide img{
+      width:100%;
+      height:auto;
+      display:block;
+    }
 
+    .slide.active{
+      display:block;
+      animation: fade 600ms ease-in-out;
+    }
+
+    @keyframes fade{
+      from{opacity:0.2}
+      to{opacity:1}
+    }
+
+    .dots{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:#cfcfcf;
+      cursor:pointer;
+    }
+
+    .dot.active{
+      background:#333;
+    }
+
+    /* Make video more reasonable on small screens */
+    @media (max-width: 900px){
+      .video-wrap{ width: 70%; }
+    }
+    @media (max-width: 600px){
+      .video-wrap{ width: 92%; }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="banner">
+  <!-- Banner (clickable) -->
+  <div class="banner">
+    <a href="https://identity.lowesfoods.com/lowesfoodsidentity.onmicrosoft.com/B2C_1A_signup_signin/oauth2/v2.0/authorize?client_id=e3d0fa76-5532-45ea-a792-e8bc62fc7a9f&prompt=login&redirect_uri=https:%2F%2Ffalcon.shop.inmar.io%2Fv1%2Fauth%2Fazure-b2c&response_mode=form_post&response_type=code&scope=openid%20offline_access&state=%7B%22redirectTo%22:%22%2F%22,%22sessionId%22:%224cMl88fxKu6dkcYA6mq3CO%22,%22environmentName%22:%22prod%22,%22policyName%22:%22B2C_1A_signup_signin%22%7D"
+       target="_top" rel="noopener">
+      <img src="image%20(31).jpg" alt="Fresh Rewards Banner">
+    </a>
+  </div>
 
-<a href="https://identity.lowesfoods.com/lowesfoodsidentity.onmicrosoft.com/B2C_1A_signup_signin/oauth2/v2.0/authorize?client_id=e3d0fa76-5532-45ea-a792-e8bc62fc7a9f&prompt=login&redirect_uri=https:%2F%2Ffalcon.shop.inmar.io%2Fv1%2Fauth%2Fazure-b2c&response_mode=form_post&response_type=code&scope=openid%20offline_access&state=%7B%22redirectTo%22:%22%2F%22,%22sessionId%22:%224cMl88fxKu6dkcYA6mq3CO%22,%22environmentName%22:%22prod%22,%22policyName%22:%22B2C_1A_signup_signin%22%7D">
+  <!-- Video -->
+  <div class="video-wrap">
+    <div class="video">
+      <iframe
+        src="https://www.youtube.com/embed/hBjlzTVNlng?autoplay=1&mute=1&rel=0&modestbranding=1"
+        allow="autoplay; encrypted-media; fullscreen"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
 
-<img src="image%20(31).jpg" alt="Fresh Rewards Banner">
+  <!-- Rotating 3-step banners -->
+  <div class="carousel" id="stepsCarousel">
+    <div class="slide active">
+      <img src="register.jpg" alt="Step 1: Enroll">
+    </div>
+    <div class="slide">
+      <img src="clip.jpg" alt="Step 2: Clip">
+    </div>
+    <div class="slide">
+      <img src="save.jpg" alt="Step 3: Save">
+    </div>
 
-</a>
+    <div class="dots" aria-label="carousel navigation">
+      <div class="dot active" data-index="0"></div>
+      <div class="dot" data-index="1"></div>
+      <div class="dot" data-index="2"></div>
+    </div>
+  </div>
 
-</div>
+  <script>
+  (function(){
+    const root = document.getElementById("stepsCarousel");
+    if(!root) return;
 
-<div class="video-wrap">
-<div class="video">
+    const slides = Array.from(root.querySelectorAll(".slide"));
+    const dots = Array.from(root.querySelectorAll(".dot"));
 
-<iframe
-src="https://www.youtube.com/embed/hBjlzTVNlng?autoplay=1&mute=1&rel=0&modestbranding=1"
-allow="autoplay; encrypted-media"
-allowfullscreen>
-</iframe>
+    let idx = 0;
+    const intervalMs = 4000;
 
-</div>
-</div>
+    function show(i){
+      idx = (i + slides.length) % slides.length;
+      slides.forEach((s, n) => s.classList.toggle("active", n === idx));
+      dots.forEach((d, n) => d.classList.toggle("active", n === idx));
+
+      // Tell Inmar to resize after slide change
+      if (window.__sendInmarHeight) {
+        window.__sendInmarHeight();
+        setTimeout(window.__sendInmarHeight, 200);
+      }
+    }
+
+    // dot click
+    dots.forEach(d => {
+      d.addEventListener("click", () => show(parseInt(d.dataset.index, 10)));
+    });
+
+    // auto-rotate
+    setInterval(() => show(idx + 1), intervalMs);
+
+    // extra resize pings after key media loads
+    window.addEventListener('load', () => {
+      if (window.__sendInmarHeight) {
+        setTimeout(window.__sendInmarHeight, 500);
+        setTimeout(window.__sendInmarHeight, 1500);
+      }
+    });
+  })();
+  </script>
 
 </body>
 </html>

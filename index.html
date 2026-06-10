@@ -1,471 +1,948 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Events Calendar</title>
-  <style>
-    :root {
-      --max: 980px;
-      --bg: #f4f6f9;
-      --card: #fff;
-      --text: #111;
-      --muted: #5f6368;
-      --line: #e6e8ee;
-      --accent: #1a73e8;
-      --radius: 16px;
-    }
-    body { margin:0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
-    .wrap { max-width: var(--max); margin: 0 auto; padding: 18px; }
-    .topbar {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: 0 6px 18px rgba(0,0,0,.08);
-      padding: 14px;
-      margin-bottom: 14px;
-    }
-    h1 { margin: 0; font-size: 20px; }
-    .sub { margin-top: 6px; color: var(--muted); font-size: 13px; }
-    .controls { display:flex; gap:10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
-    .btn {
-      border: 0;
-      background: var(--accent);
-      color: #fff;
-      font-weight: 700;
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-    .btn.secondary { background:#111; }
-    .pill {
-      border: 1px solid var(--line);
-      background: #fff;
-      border-radius: 999px;
-      padding: 8px 10px;
-      font-size: 13px;
-      color: var(--muted);
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    select, input {
-      border: 0;
-      outline: none;
-      font-size: 13px;
-      color: var(--text);
-      background: transparent;
-      width: 100%;
-    }
+  <title>Lowes Foods | In-Store Events</title>
 
-    .grid { display:grid; grid-template-columns: 1fr; gap: 14px; }
-    @media (min-width: 820px) { .grid { grid-template-columns: 1fr 1fr; } }
-
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: 0 6px 18px rgba(0,0,0,.08);
-      overflow: hidden;
-    }
-    .cardhead {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--line);
-      display:flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 10px;
-    }
-    .monthTitle { font-size: 16px; font-weight: 800; }
-    .legend { color: var(--muted); font-size: 12px; }
-
-    .cal {
-      padding: 10px;
-      display:grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-    }
-    .dow {
-      font-size: 11px;
-      color: var(--muted);
-      text-align:center;
-      padding: 6px 0;
-    }
-    .day {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      min-height: 72px;
-      padding: 8px;
-      position: relative;
-    }
-    .day.muted { opacity: .45; }
-    .daynum { font-weight: 800; font-size: 12px; }
-    .dots { display:flex; gap:4px; flex-wrap: wrap; margin-top: 6px; }
-    .dot {
-      width: 8px; height: 8px; border-radius: 999px;
-      background: var(--accent);
-    }
-    .today { outline: 3px solid rgba(26,115,232,.25); border-color: rgba(26,115,232,.55); }
-    .list {
-      padding: 12px 14px;
-    }
-    .event {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 10px;
-      cursor: pointer;
-    }
-    .event:hover { border-color: rgba(26,115,232,.45); }
-    .etitle { font-weight: 900; margin:0 0 6px; }
-    .meta { color: var(--muted); font-size: 12px; margin: 0; }
-    .desc { margin: 8px 0 0; font-size: 13px; }
-
-    /* Modal */
-    .overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.35);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
-    }
-    .overlay.show { display:flex; }
-    .modal {
-      max-width: 720px;
-      width: 100%;
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 14px 40px rgba(0,0,0,.25);
-      overflow:hidden;
-    }
-    .modalhead {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--line);
-      display:flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-    .close {
-      background: #111;
-      color: #fff;
-      border: 0;
-      border-radius: 12px;
-      padding: 10px 12px;
-      cursor:pointer;
-      font-weight: 800;
-    }
-    .modalbody { padding: 14px 16px; }
-    .modalbody h2 { margin: 0 0 8px; }
-    .small { color: var(--muted); font-size: 12px; margin-top: 10px; }
-
-  </style>
-
-  <!-- Inmar iframe auto-height helper -->
+  <!-- ============================================================= -->
+  <!-- INMAR AUTO-SIZE HEIGHT SNIPPET (required by the iframe host)   -->
+  <!-- Reports the page height up to the parent on load + resize.     -->
+  <!-- ============================================================= -->
   <script>
     function sendHeight() {
-      const height = document.documentElement.scrollHeight;
-      window.parent.postMessage({ type: "resize", height }, "*");
+      const height = document.body.scrollHeight;
+      window.parent.postMessage({ type: 'resize', height }, '*');
     }
-    window.addEventListener("load", sendHeight);
-    window.addEventListener("resize", sendHeight);
-    new MutationObserver(sendHeight).observe(document.documentElement, { childList: true, subtree: true });
-    setTimeout(sendHeight, 500);
-    setTimeout(sendHeight, 1500);
+    window.addEventListener('load', sendHeight);
+    window.addEventListener('resize', sendHeight);
   </script>
+
+  <style>
+    /* ---------- Lowes Foods brand tokens ---------- */
+    :root {
+      --lf-green:        #006428; /* FY23 working green (primary) */
+      --lf-green-dark:   #00612B; /* official green */
+      --lf-green-2:      #369344; /* secondary green */
+      --tan:             #FFFAF8; /* wood-grain off-white */
+      --lines:           #BAB9AD; /* lines grey */
+      --charcoal:        #171616; /* body text */
+      --light-grey:      #E7E6E6; /* subtle panels */
+      --cool-grey:       #A5A5A5;
+      --white:           #FFFFFF;
+      --radius:          14px;
+      --shadow:          0 1px 3px rgba(23,22,22,.08), 0 6px 18px rgba(23,22,22,.06);
+      --sans: "Franklin Gothic Demi","Franklin Gothic Medium","Arial Narrow",Arial,Helvetica,sans-serif;
+      --sans-body: "Franklin Gothic Book","Franklin Gothic Medium",Arial,Helvetica,sans-serif;
+      --serif: Georgia,"Times New Roman",serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: var(--sans-body);
+      color: var(--charcoal);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- Header ---------- */
+    .lf-header {
+      background: var(--lf-green);
+      color: var(--white);
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .lf-header img { height: 46px; width: auto; display: block; }
+    .lf-header .titles { line-height: 1.1; }
+    .lf-header h1 {
+      font-family: var(--sans);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      font-size: 22px;
+      margin: 0;
+    }
+    .lf-header .tagline {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 13px;
+      opacity: .9;
+      margin-top: 2px;
+    }
+    .lf-accent-bar { height: 4px; background: var(--lf-green-2); }
+
+    /* ---------- Page wrapper ---------- */
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 22px 18px 28px; }
+
+    .page-title {
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--lf-green-dark);
+      font-size: 20px;
+      margin: 4px 0 2px;
+    }
+    .page-sub {
+      font-family: var(--serif);
+      color: var(--cool-grey);
+      font-size: 14px;
+      margin: 0 0 16px;
+    }
+
+    /* ---------- App card ---------- */
+    .app {
+      background: var(--tan);
+      border: 1px solid var(--lines);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .app-head { margin-bottom: 14px; }
+    .app-head h2 {
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--lf-green-dark);
+      font-size: 18px;
+      margin: 0;
+    }
+    .app-head p { margin: 3px 0 0; font-size: 13px; color: var(--cool-grey); }
+
+    /* ---------- Toolbar ---------- */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0 4px;
+    }
+    .nav-group { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--lf-green);
+      color: var(--white);
+      font-size: 16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s ease;
+    }
+    .nav-btn:hover { background: var(--lf-green-dark); }
+    .today-btn {
+      border: none;
+      background: var(--lf-green);
+      color: var(--white);
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .today-btn:hover { background: var(--lf-green-dark); }
+
+    .field { display: flex; align-items: center; gap: 6px; }
+    .field label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      color: var(--cool-grey);
+      font-family: var(--sans);
+    }
+    .field select, .field input {
+      font-family: var(--sans-body);
+      font-size: 14px;
+      color: var(--charcoal);
+      padding: 8px 10px;
+      border: 1px solid var(--lines);
+      border-radius: 8px;
+      background: var(--white);
+      outline: none;
+    }
+    .field select:focus, .field input:focus { border-color: var(--lf-green); }
+    .field.search { flex: 1 1 200px; min-width: 180px; }
+    .field.search input { width: 100%; }
+
+    /* ---------- Searchable combo dropdown ---------- */
+    .combo { position: relative; display: inline-block; }
+    #storeCombo { min-width: 250px; }
+    #catCombo { min-width: 175px; }
+    .combo-btn {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      font-family: var(--sans-body); font-size: 14px; color: var(--charcoal);
+      background: var(--white); border: 1px solid var(--lines); border-radius: 8px;
+      padding: 8px 12px; cursor: pointer; text-align: left;
+      transition: border-color .12s ease, box-shadow .12s ease;
+    }
+    .combo-btn:hover { border-color: var(--lf-green); }
+    .combo.open .combo-btn { border-color: var(--lf-green); box-shadow: 0 0 0 2px rgba(0,100,40,.15); }
+    .combo-val { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .combo-caret { color: var(--lf-green); font-size: 10px; transition: transform .15s ease; flex: none; }
+    .combo.open .combo-caret { transform: rotate(180deg); }
+    .combo-panel {
+      display: none; position: absolute; z-index: 30; top: calc(100% + 5px); left: 0;
+      min-width: 100%; width: max-content; max-width: 340px;
+      background: var(--white); border: 1px solid var(--lines); border-radius: 12px;
+      box-shadow: var(--shadow); padding: 7px;
+    }
+    .combo.open .combo-panel { display: block; }
+    .combo-search {
+      width: 100%; box-sizing: border-box;
+      font-family: var(--sans-body); font-size: 13px; color: var(--charcoal);
+      padding: 8px 10px; border: 1px solid var(--lines); border-radius: 7px; outline: none;
+      margin-bottom: 6px;
+    }
+    .combo-search:focus { border-color: var(--lf-green); }
+    .combo-opts { max-height: 240px; overflow: auto; }
+    .combo-opt {
+      display: flex; align-items: center; gap: 9px;
+      padding: 8px 10px; border-radius: 7px; cursor: pointer; font-size: 13px;
+    }
+    .combo-opt:hover { background: var(--tan); }
+    .combo-opt.sel { background: rgba(0,100,40,.10); color: var(--lf-green-dark); font-weight: 600; }
+    .combo-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+    .combo-none { padding: 9px 10px; font-size: 13px; color: var(--cool-grey); }
+
+    /* ---------- Two-column body ---------- */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    /* ---------- Calendar ---------- */
+    .cal-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .cal-month {
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--lf-green-dark);
+      font-size: 17px;
+      margin: 0;
+    }
+    .cal-legend-note { font-size: 11px; color: var(--cool-grey); }
+
+    .dow {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .dow span {
+      text-align: center;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      color: var(--cool-grey);
+      font-family: var(--sans);
+    }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+    .cell {
+      background: var(--white);
+      border: 1px solid var(--light-grey);
+      border-radius: 10px;
+      min-height: 64px;
+      padding: 6px;
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: border-color .12s ease, box-shadow .12s ease;
+    }
+    .cell.muted { background: var(--tan); }
+    .cell.muted .cell-num { color: var(--cool-grey); font-weight: 400; }
+    .cell.has-events { cursor: pointer; }
+    .cell.has-events:hover { border-color: var(--lf-green); }
+    .cell.today { border-color: var(--lf-green); box-shadow: 0 0 0 2px rgba(0,100,40,.18) inset; }
+    .cell.selected { border-color: var(--lf-green); box-shadow: 0 0 0 2px var(--lf-green) inset; }
+    .cell-num { font-family: var(--sans); font-weight: 700; font-size: 13px; color: var(--charcoal); }
+    .dots { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot-more { font-size: 10px; color: var(--cool-grey); font-family: var(--sans); line-height: 8px; }
+
+    /* ---------- Sidebar (Upcoming / day detail) ---------- */
+    .side-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+    .side-title {
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--lf-green-dark);
+      font-size: 16px;
+      margin: 0;
+    }
+    .side-count { font-size: 12px; color: var(--cool-grey); white-space: nowrap; }
+    .back-link {
+      background: none; border: none; padding: 0;
+      color: var(--lf-green); font-size: 12px; cursor: pointer;
+      font-family: var(--sans); text-transform: uppercase; letter-spacing: .3px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .ev-list { display: flex; flex-direction: column; gap: 10px; max-height: 560px; overflow: auto; padding-right: 2px; }
+    .ev-card {
+      background: var(--white);
+      border: 1px solid var(--light-grey);
+      border-left-width: 5px;
+      border-radius: 10px;
+      padding: 11px 12px;
+    }
+    .ev-date {
+      font-family: var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      font-size: 11px;
+      color: var(--lf-green);
+      margin-bottom: 3px;
+    }
+    .ev-name { font-family: var(--sans); font-weight: 700; font-size: 15px; color: var(--charcoal); margin: 0 0 4px; }
+    .ev-meta { font-size: 13px; color: var(--charcoal); margin: 2px 0; display: flex; align-items: center; gap: 6px; }
+    .ev-meta .ico { opacity: .6; }
+    .ev-desc { font-family: var(--serif); font-size: 13px; color: #4a4a47; margin: 7px 0 0; line-height: 1.4; }
+    .chip {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      color: var(--white);
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-top: 8px;
+    }
+    .empty {
+      background: var(--white);
+      border: 1px dashed var(--lines);
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+      color: var(--cool-grey);
+      font-size: 13px;
+    }
+
+    /* ---------- Footer ---------- */
+    .app-foot {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--lines);
+      font-size: 11px;
+      color: var(--cool-grey);
+    }
+    .app-foot code {
+      background: var(--light-grey);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    /* ---------- Tabs ---------- */
+    .tabs {
+      display: flex; gap: 2px;
+      border-bottom: 1px solid var(--lines);
+      margin: 18px 0 0;
+    }
+    .tab {
+      background: none; border: none;
+      padding: 11px 18px;
+      font-family: var(--sans);
+      text-transform: uppercase; letter-spacing: .6px;
+      font-size: 13px; color: var(--cool-grey);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+    }
+    .tab:hover { color: var(--lf-green-dark); }
+    .tab.active { color: var(--lf-green-dark); border-bottom-color: var(--lf-green); }
+    .view { margin-top: 8px; }
+
+    /* ---------- Feed (app-style list) ---------- */
+    .feed-group-h {
+      font-family: var(--sans);
+      text-transform: uppercase; letter-spacing: .6px;
+      font-size: 12px; color: var(--lf-green);
+      padding: 16px 2px 4px;
+    }
+    .row-wrap { border-bottom: 1px solid var(--light-grey); }
+    .row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 6px; cursor: pointer;
+      border-radius: 10px;
+      transition: background .12s ease;
+    }
+    .row:hover { background: var(--tan); }
+    .thumb {
+      width: 56px; height: 56px; border-radius: 50%;
+      flex: none;
+      background-color: var(--light-grey);
+      background-size: cover; background-position: center;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; line-height: 1;
+      box-sizing: border-box;
+    }
+    .row-main { flex: 1 1 auto; min-width: 0; }
+    .row-name {
+      font-family: var(--sans); font-weight: 700;
+      font-size: 16px; color: var(--charcoal);
+      margin: 0 0 3px;
+    }
+    .row-sub {
+      font-size: 13px; color: var(--cool-grey);
+      margin: 0;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 3px 14px;
+    }
+    .row-sub .ico { opacity: .6; margin-right: 2px; }
+    .row-cat { display: inline-flex; align-items: center; gap: 6px; color: var(--charcoal); }
+    .row-cat .d { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .row-chev {
+      color: var(--lines); font-size: 22px; flex: none;
+      transition: transform .15s ease; padding-left: 4px;
+    }
+    .row.open .row-chev { transform: rotate(90deg); color: var(--lf-green); }
+    .row-detail {
+      padding: 0 6px 16px 76px;
+      font-family: var(--serif); font-size: 14px;
+      color: #4a4a47; line-height: 1.5;
+    }
+    .day-panel { margin-top: 6px; }
+    .day-hint {
+      text-align: center; color: var(--cool-grey);
+      font-size: 13px; padding: 16px 0 4px;
+    }
+
+    /* ---------- Responsive: stack on narrow iframes ---------- */
+    @media (max-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .ev-list { max-height: none; }
+      .cell { min-height: 52px; }
+      .field.search { order: 99; flex-basis: 100%; }
+      .field { flex: 1 1 100%; }
+      .combo, #storeCombo, #catCombo { display: block; width: 100%; min-width: 0; }
+      .combo-panel { max-width: none; }
+      .thumb { width: 48px; height: 48px; font-size: 22px; }
+      .row-detail { padding-left: 6px; }
+      .row-name { font-size: 15px; }
+    }
+  </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="topbar">
+
+  <header class="lf-header">
+    <img id="lfLogo" src="data:image/png;base64,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" alt="Lowes Foods" />
+    <div class="titles">
       <h1>Events Calendar</h1>
-      <div class="sub">Tap a day (dots) or an event to see details.</div>
+      <div class="tagline">Bringing your community back to the table.</div>
+    </div>
+  </header>
+  <div class="lf-accent-bar"></div>
 
-      <div class="controls">
-        <button class="btn secondary" id="prevBtn">◀</button>
-        <button class="btn" id="todayBtn">Today</button>
-        <button class="btn secondary" id="nextBtn">▶</button>
+  <div class="wrap">
+    <h2 class="page-title">In-Store Events</h2>
+    <p class="page-sub">See what's happening at your Lowes Foods — tastings, classes, and more.</p>
 
-        <div class="pill" style="min-width:220px;">
-          <span>Store</span>
-          <select id="storeFilter" aria-label="Store Filter">
-            <option value="ALL">All stores</option>
-          </select>
+    <div class="app">
+      <div class="app-head">
+        <h2>Events Calendar</h2>
+        <p>Browse what's coming up, or switch to the calendar. Tap any event to see the details.</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="field">
+          <label>Store</label>
+          <div class="combo" id="storeCombo"></div>
         </div>
-
-        <div class="pill" style="min-width:260px; flex:1;">
-          <span>Search</span>
-          <input id="searchInput" placeholder="Type an event name..." />
+        <div class="field">
+          <label>Category</label>
+          <div class="combo" id="catCombo"></div>
         </div>
+        <div class="field search">
+          <input id="searchInput" type="text" placeholder="Search events…" />
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" id="tabList" type="button">Upcoming</button>
+        <button class="tab" id="tabCal" type="button">Calendar</button>
+      </div>
+
+      <!-- LIST / FEED VIEW -->
+      <div class="view" id="feedView">
+        <div class="feed" id="feed"></div>
+      </div>
+
+      <!-- CALENDAR VIEW -->
+      <div class="view" id="calView" hidden>
+        <div class="cal-head">
+          <div class="nav-group">
+            <button class="nav-btn" id="prevBtn" aria-label="Previous month">&#8249;</button>
+            <button class="today-btn" id="todayBtn">Today</button>
+            <button class="nav-btn" id="nextBtn" aria-label="Next month">&#8250;</button>
+          </div>
+          <h3 class="cal-month" id="calMonth">—</h3>
+          <span class="cal-legend-note">• events shown as dots</span>
+        </div>
+        <div class="dow">
+          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="day-panel" id="dayPanel"></div>
+      </div>
+
+      <div class="app-foot">
+        Admin note: update events by editing <code>events.json</code> in this repo — no changes to the HTML needed.
       </div>
     </div>
-
-    <div class="grid">
-      <div class="card">
-        <div class="cardhead">
-          <div class="monthTitle" id="monthTitle">Month YYYY</div>
-          <div class="legend" id="legend">• events shown as dots</div>
-        </div>
-
-        <div class="cal" id="cal">
-          <!-- DOW headers + days injected -->
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="cardhead">
-          <div class="monthTitle">Upcoming</div>
-          <div class="legend" id="countLabel">0 events</div>
-        </div>
-        <div class="list" id="list"></div>
-      </div>
-    </div>
-
-    <div class="small">Admin note: edit <strong>events.json</strong> in this repo to update events.</div>
   </div>
 
-  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Event details">
-    <div class="modal">
-      <div class="modalhead">
-        <div style="font-weight:900;">Event details</div>
-        <button class="close" id="closeBtn">Close</button>
-      </div>
-      <div class="modalbody" id="modalBody"></div>
-    </div>
-  </div>
+  <script>
+    /* ===================== Inmar resize helper =====================
+       Inmar's snippet (in <head>) only fires on load + window resize.
+       This calendar changes height on every click/filter, so we also
+       push the height after each render and whenever the DOM changes. */
+    function pushHeight() {
+      if (typeof sendHeight === 'function') sendHeight();
+    }
+    if (window.ResizeObserver) {
+      new ResizeObserver(pushHeight).observe(document.body);
+    }
 
-<script>
-  const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  const calEl = document.getElementById("cal");
-  const listEl = document.getElementById("list");
-  const monthTitleEl = document.getElementById("monthTitle");
-  const countLabelEl = document.getElementById("countLabel");
-  const storeFilterEl = document.getElementById("storeFilter");
-  const searchInputEl = document.getElementById("searchInput");
-  const overlayEl = document.getElementById("overlay");
-  const modalBodyEl = document.getElementById("modalBody");
+    /* ===================== State ===================== */
+    var DATA = { categories: [], stores: [], events: [] };
+    var catColor = {};            // name -> color
+    var view = new Date(2026, 5, 1); // June 2026 (month is 0-based) — reset to today on load
+    var selectedKey = null;       // 'YYYY-MM-DD' or null
+    var filters = { store: 'all', category: 'all', search: '' };
+    var activeView = 'list';      // 'list' | 'cal'
 
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const todayBtn = document.getElementById("todayBtn");
-  const closeBtn = document.getElementById("closeBtn");
+    /* ===================== Date helpers ===================== */
+    function pad(n){ return (n < 10 ? '0' : '') + n; }
+    function keyFromParts(y, m, d){ return y + '-' + pad(m + 1) + '-' + pad(d); }
+    function parseKey(k){ var p = k.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+    function todayDate(){ var t = new Date(); return new Date(t.getFullYear(), t.getMonth(), t.getDate()); }
+    function todayKey(){ var t = todayDate(); return keyFromParts(t.getFullYear(), t.getMonth(), t.getDate()); }
 
-  let allEvents = [];
-  let viewDate = new Date(); // month being shown
+    var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var DOW_LONG = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
-  function pad2(n){ return String(n).padStart(2,"0"); }
+    function fmtTime(hhmm){
+      if (!hhmm) return '';
+      var p = hhmm.split(':'); var h = +p[0], m = +p[1];
+      var ap = h >= 12 ? 'PM' : 'AM';
+      var h12 = h % 12; if (h12 === 0) h12 = 12;
+      return h12 + ':' + pad(m) + ' ' + ap;
+    }
+    function fmtRange(s, e){ return e ? fmtTime(s) + ' – ' + fmtTime(e) : fmtTime(s); }
+    function fmtLongDate(k){
+      var d = parseKey(k);
+      return DOW_LONG[d.getDay()] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate();
+    }
+    function fmtShortDate(k){
+      var d = parseKey(k);
+      return MONTHS[d.getMonth()].slice(0,3).toUpperCase() + ' ' + d.getDate();
+    }
 
-  function formatDateTime(d) {
-    const dt = new Date(d);
-    const yyyy = dt.getFullYear();
-    const mm = pad2(dt.getMonth()+1);
-    const dd = pad2(dt.getDate());
-    let h = dt.getHours();
-    const m = pad2(dt.getMinutes());
-    const ampm = h >= 12 ? "PM" : "AM";
-    h = h % 12; if (h === 0) h = 12;
-    return `${mm}/${dd}/${yyyy} ${h}:${m} ${ampm}`;
-  }
-
-  function startOfDay(d){ const x = new Date(d); x.setHours(0,0,0,0); return x; }
-  function sameDay(a,b){ return startOfDay(a).getTime() === startOfDay(b).getTime(); }
-
-  function monthLabel(d){
-    return d.toLocaleDateString(undefined, { month:"long", year:"numeric" });
-  }
-
-  function getFilters() {
-    const store = storeFilterEl.value;
-    const q = (searchInputEl.value || "").trim().toLowerCase();
-    return { store, q };
-  }
-
-  function applyFilters(events) {
-    const { store, q } = getFilters();
-    return events.filter(e => {
-      const matchesStore = (store === "ALL") || ((e.location || "").toLowerCase() === store.toLowerCase());
-      const blob = `${e.title||""} ${e.location||""} ${e.description||""}`.toLowerCase();
-      const matchesQ = !q || blob.includes(q);
-      return matchesStore && matchesQ;
-    });
-  }
-
-  function byStartAsc(a,b){ return new Date(a.start) - new Date(b.start); }
-
-  function eventsOnDay(events, dayDate) {
-    const dayStart = startOfDay(dayDate).getTime();
-    const dayEnd = dayStart + 24*60*60*1000;
-    return events.filter(e => {
-      const s = new Date(e.start).getTime();
-      return s >= dayStart && s < dayEnd;
-    }).sort(byStartAsc);
-  }
-
-  function buildStoreFilter(events) {
-    const stores = Array.from(new Set(events.map(e => (e.location||"").trim()).filter(Boolean))).sort();
-    // reset
-    storeFilterEl.innerHTML = `<option value="ALL">All stores</option>` +
-      stores.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
-  }
-
-  function escapeHtml(str){
-    return String(str)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  function render() {
-    const filtered = applyFilters(allEvents);
-    const year = viewDate.getFullYear();
-    const month = viewDate.getMonth();
-
-    monthTitleEl.textContent = monthLabel(viewDate);
-
-    // Calendar grid setup
-    calEl.innerHTML = "";
-    // DOW headers
-    DOW.forEach(d => {
-      const el = document.createElement("div");
-      el.className = "dow";
-      el.textContent = d;
-      calEl.appendChild(el);
-    });
-
-    const firstOfMonth = new Date(year, month, 1);
-    const startDay = firstOfMonth.getDay(); // 0..6
-    const daysInMonth = new Date(year, month+1, 0).getDate();
-
-    // We’ll render 6 weeks worth for consistent layout (42 days)
-    const gridStart = new Date(year, month, 1 - startDay);
-    const today = new Date();
-
-    for (let i=0; i<42; i++){
-      const cellDate = new Date(gridStart);
-      cellDate.setDate(gridStart.getDate() + i);
-
-      const inMonth = cellDate.getMonth() === month;
-      const dayEvents = eventsOnDay(filtered, cellDate);
-
-      const cell = document.createElement("div");
-      cell.className = "day" + (inMonth ? "" : " muted") + (sameDay(cellDate, today) ? " today" : "");
-
-      const num = document.createElement("div");
-      num.className = "daynum";
-      num.textContent = cellDate.getDate();
-      cell.appendChild(num);
-
-      const dots = document.createElement("div");
-      dots.className = "dots";
-      const dotCount = Math.min(dayEvents.length, 6);
-      for (let d=0; d<dotCount; d++){
-        const dot = document.createElement("div");
-        dot.className = "dot";
-        dots.appendChild(dot);
+    /* ===================== Filtering ===================== */
+    function passesFilters(ev){
+      if (filters.store !== 'all' && ev.store !== filters.store) return false;
+      if (filters.category !== 'all' && ev.category !== filters.category) return false;
+      if (filters.search) {
+        var q = filters.search.toLowerCase();
+        var hay = (ev.name + ' ' + (ev.description||'') + ' ' + ev.store).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
       }
-      cell.appendChild(dots);
+      return true;
+    }
+    function eventsOnKey(k){
+      return DATA.events.filter(function(ev){ return ev.date === k && passesFilters(ev); })
+                        .sort(function(a,b){ return (a.start||'').localeCompare(b.start||''); });
+    }
+    function upcomingEvents(){
+      var tk = todayKey();
+      return DATA.events
+        .filter(function(ev){ return ev.date >= tk && passesFilters(ev); })
+        .sort(function(a,b){
+          if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+          return (a.start||'').localeCompare(b.start||'');
+        });
+    }
 
-      cell.addEventListener("click", () => {
-        if (dayEvents.length === 0) return;
-        openModalForDay(cellDate, dayEvents);
+    /* ===================== Renderers ===================== */
+    function renderCalendar(){
+      var y = view.getFullYear(), m = view.getMonth();
+      document.getElementById('calMonth').textContent = MONTHS[m] + ' ' + y;
+
+      var grid = document.getElementById('calGrid');
+      grid.innerHTML = '';
+
+      var first = new Date(y, m, 1);
+      var startDow = first.getDay();                 // 0=Sun
+      var daysInMonth = new Date(y, m + 1, 0).getDate();
+      var prevDays = new Date(y, m, 0).getDate();
+      var tk = todayKey();
+
+      // 6 rows x 7 = 42 cells
+      for (var i = 0; i < 42; i++) {
+        var cell = document.createElement('div');
+        cell.className = 'cell';
+        var dayNum, cellY = y, cellM = m, muted = false;
+
+        if (i < startDow) {
+          dayNum = prevDays - startDow + 1 + i; muted = true;
+          cellM = m - 1; if (cellM < 0) { cellM = 11; cellY = y - 1; }
+        } else if (i >= startDow + daysInMonth) {
+          dayNum = i - (startDow + daysInMonth) + 1; muted = true;
+          cellM = m + 1; if (cellM > 11) { cellM = 0; cellY = y + 1; }
+        } else {
+          dayNum = i - startDow + 1;
+        }
+
+        var key = keyFromParts(cellY, cellM, dayNum);
+        if (muted) cell.classList.add('muted');
+        if (key === tk) cell.classList.add('today');
+        if (key === selectedKey) cell.classList.add('selected');
+
+        var num = document.createElement('div');
+        num.className = 'cell-num';
+        num.textContent = dayNum;
+        cell.appendChild(num);
+
+        var dayEvents = eventsOnKey(key);
+        if (dayEvents.length) {
+          cell.classList.add('has-events');
+          var dots = document.createElement('div');
+          dots.className = 'dots';
+          var shown = Math.min(dayEvents.length, 4);
+          for (var j = 0; j < shown; j++) {
+            var dot = document.createElement('span');
+            dot.className = 'dot';
+            dot.style.background = catColor[dayEvents[j].category] || '#369344';
+            dots.appendChild(dot);
+          }
+          if (dayEvents.length > 4) {
+            var more = document.createElement('span');
+            more.className = 'dot-more';
+            more.textContent = '+' + (dayEvents.length - 4);
+            dots.appendChild(more);
+          }
+          cell.appendChild(dots);
+          (function(k){
+            cell.addEventListener('click', function(){ selectDay(k); });
+          })(key);
+        }
+        grid.appendChild(cell);
+      }
+    }
+
+    function hexA(hex, a){
+      var h = (hex || '#369344').replace('#','');
+      if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+      var n = parseInt(h, 16);
+      return 'rgba(' + ((n>>16)&255) + ',' + ((n>>8)&255) + ',' + (n&255) + ',' + a + ')';
+    }
+    function catIcon(cat){
+      var m = { 'Wine':'🍷', 'Beer Den':'🍺', 'Tastings':'🍴', 'Hands-On Class':'✋' };
+      return m[cat] || '📅';
+    }
+
+    /* App-style feed row: round thumbnail + name + store/time/category, tap to expand. */
+    function eventRow(ev, withDate){
+      var color = catColor[ev.category] || '#369344';
+      var wrap = document.createElement('div');
+      wrap.className = 'row-wrap';
+
+      var row = document.createElement('div');
+      row.className = 'row';
+
+      var thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      if (ev.image) {
+        thumb.style.backgroundImage = 'url("' + ev.image + '")';
+      } else {
+        thumb.textContent = ev.icon || catIcon(ev.category);
+        thumb.style.background = hexA(color, 0.14);
+        thumb.style.border = '2px solid ' + hexA(color, 0.40);
+      }
+
+      var main = document.createElement('div');
+      main.className = 'row-main';
+      var datePart = withDate ? '<span><span class="ico">&#128197;</span>' + fmtShortDate(ev.date) + '</span>' : '';
+      main.innerHTML =
+        '<p class="row-name">' + escapeHtml(ev.name) + '</p>' +
+        '<p class="row-sub">' +
+          datePart +
+          '<span><span class="ico">&#128205;</span>' + escapeHtml(ev.store) + '</span>' +
+          '<span><span class="ico">&#128336;</span>' + fmtRange(ev.start, ev.end) + '</span>' +
+          '<span class="row-cat"><i class="d" style="background:' + color + '"></i>' + escapeHtml(ev.category) + '</span>' +
+        '</p>';
+
+      var chev = document.createElement('span');
+      chev.className = 'row-chev';
+      chev.innerHTML = '&#8250;';
+
+      row.appendChild(thumb); row.appendChild(main); row.appendChild(chev);
+
+      var detail = document.createElement('div');
+      detail.className = 'row-detail';
+      detail.hidden = true;
+      if (ev.description) detail.textContent = ev.description;
+
+      row.addEventListener('click', function(){
+        var isOpen = row.classList.toggle('open');
+        detail.hidden = !isOpen || !ev.description;
+        pushHeight();
       });
 
-      calEl.appendChild(cell);
+      wrap.appendChild(row);
+      wrap.appendChild(detail);
+      return wrap;
     }
 
-    // Upcoming list (next 60 days from today)
-    const now = new Date();
-    const horizon = new Date(now.getTime() + 60*24*60*60*1000);
-    const upcoming = filtered
-      .filter(e => new Date(e.start) >= now && new Date(e.start) <= horizon)
-      .sort(byStartAsc);
-
-    countLabelEl.textContent = `${upcoming.length} event${upcoming.length===1?"":"s"}`;
-
-    listEl.innerHTML = upcoming.length ? "" : `<div class="event"><p class="meta">No upcoming events match your filters.</p></div>`;
-    upcoming.slice(0, 20).forEach(e => {
-      const div = document.createElement("div");
-      div.className = "event";
-      div.innerHTML = `
-        <div class="etitle">${escapeHtml(e.title || "Untitled event")}</div>
-        <p class="meta">${escapeHtml(formatDateTime(e.start))}${e.location ? " • " + escapeHtml(e.location) : ""}</p>
-        ${e.description ? `<p class="desc">${escapeHtml(e.description)}</p>` : ""}
-      `;
-      div.addEventListener("click", () => openModalForEvent(e));
-      listEl.appendChild(div);
-    });
-
-    // nudge iframe height
-    if (window.parent) {
-      try {
-        const height = document.documentElement.scrollHeight;
-        window.parent.postMessage({ type: "resize", height }, "*");
-      } catch {}
+    function renderFeed(){
+      var feed = document.getElementById('feed');
+      feed.innerHTML = '';
+      var items = upcomingEvents();
+      if (!items.length) {
+        feed.innerHTML = '<div class="empty">No upcoming events match your filters.</div>';
+        return;
+      }
+      var curKey = null;
+      items.forEach(function(ev){
+        if (ev.date !== curKey) {
+          curKey = ev.date;
+          var h = document.createElement('div');
+          h.className = 'feed-group-h';
+          h.textContent = fmtLongDate(ev.date);
+          feed.appendChild(h);
+        }
+        feed.appendChild(eventRow(ev, false));
+      });
     }
-  }
 
-  function openModalForDay(date, dayEvents) {
-    const pretty = date.toLocaleDateString(undefined, { weekday:"long", month:"long", day:"numeric" });
-    const items = dayEvents.map(e => `
-      <div style="border:1px solid #e6e8ee; border-radius:14px; padding:12px; margin:10px 0;">
-        <div style="font-weight:900; margin-bottom:6px;">${escapeHtml(e.title || "Untitled event")}</div>
-        <div style="color:#5f6368; font-size:12px;">
-          ${escapeHtml(formatDateTime(e.start))}${e.location ? " • " + escapeHtml(e.location) : ""}
-        </div>
-        ${e.description ? `<div style="margin-top:8px; font-size:13px;">${escapeHtml(e.description)}</div>` : ""}
-      </div>
-    `).join("");
+    function renderDayPanel(){
+      var panel = document.getElementById('dayPanel');
+      panel.innerHTML = '';
+      if (!selectedKey) {
+        panel.innerHTML = '<div class="day-hint">Tap a day with dots to see its events.</div>';
+        return;
+      }
+      var h = document.createElement('div');
+      h.className = 'feed-group-h';
+      h.textContent = fmtLongDate(selectedKey);
+      panel.appendChild(h);
 
-    modalBodyEl.innerHTML = `
-      <h2 style="margin:0 0 8px;">${escapeHtml(pretty)}</h2>
-      <div style="color:#5f6368; font-size:12px; margin-bottom:10px;">${dayEvents.length} event${dayEvents.length===1?"":"s"}</div>
-      ${items}
-    `;
-    overlayEl.classList.add("show");
-  }
-
-  function openModalForEvent(e) {
-    modalBodyEl.innerHTML = `
-      <h2 style="margin:0 0 8px;">${escapeHtml(e.title || "Untitled event")}</h2>
-      <div style="color:#5f6368; font-size:12px;">
-        ${escapeHtml(formatDateTime(e.start))}${e.location ? " • " + escapeHtml(e.location) : ""}
-      </div>
-      ${e.description ? `<div style="margin-top:12px; font-size:14px;">${escapeHtml(e.description)}</div>` : ""}
-      <div class="small">Admin note: update this event in <strong>events.json</strong>.</div>
-    `;
-    overlayEl.classList.add("show");
-  }
-
-  function closeModal(){ overlayEl.classList.remove("show"); }
-
-  overlayEl.addEventListener("click", (e) => { if (e.target === overlayEl) closeModal(); });
-  closeBtn.addEventListener("click", closeModal);
-
-  prevBtn.addEventListener("click", () => { viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth()-1, 1); render(); });
-  nextBtn.addEventListener("click", () => { viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth()+1, 1); render(); });
-  todayBtn.addEventListener("click", () => { viewDate = new Date(); render(); });
-
-  storeFilterEl.addEventListener("change", render);
-  searchInputEl.addEventListener("input", render);
-
-  async function init() {
-    try {
-      const res = await fetch("./events.json", { cache: "no-store" });
-      const data = await res.json();
-      allEvents = Array.isArray(data) ? data : [];
-      allEvents = allEvents.filter(e => e && e.start && e.title);
-      buildStoreFilter(allEvents);
-      render();
-    } catch (err) {
-      listEl.innerHTML = `<div class="event"><p class="meta">Could not load events.json. Check that it exists and is valid JSON.</p></div>`;
-      render();
+      var items = eventsOnKey(selectedKey);
+      if (!items.length) {
+        var e = document.createElement('div');
+        e.className = 'empty';
+        e.textContent = 'No events this day match your filters.';
+        panel.appendChild(e);
+        return;
+      }
+      items.forEach(function(ev){ panel.appendChild(eventRow(ev, false)); });
     }
-  }
 
-  init();
-</script>
+    function renderAll(){
+      var feedView = document.getElementById('feedView');
+      var calView = document.getElementById('calView');
+      if (activeView === 'list') {
+        feedView.hidden = false; calView.hidden = true;
+        renderFeed();
+      } else {
+        feedView.hidden = true; calView.hidden = false;
+        renderCalendar();
+        renderDayPanel();
+      }
+      pushHeight();
+    }
 
+    function setView(v){
+      activeView = v;
+      document.getElementById('tabList').classList.toggle('active', v === 'list');
+      document.getElementById('tabCal').classList.toggle('active', v === 'cal');
+      renderAll();
+    }
+
+    function selectDay(k){
+      selectedKey = (selectedKey === k) ? null : k;
+      renderCalendar();
+      renderDayPanel();
+      pushHeight();
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    /* ===================== Wiring ===================== */
+    /* ---------- Searchable combo component ---------- */
+    var COMBOS = [];
+    function closeAllCombos(){ COMBOS.forEach(function(c){ c.close(); }); }
+    document.addEventListener('click', closeAllCombos);
+
+    function createCombo(mountId, config){
+      var mount = document.getElementById(mountId);
+      var value = config.value;
+      var items = config.items;
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'combo-btn';
+      var valSpan = document.createElement('span'); valSpan.className = 'combo-val';
+      var caret = document.createElement('span'); caret.className = 'combo-caret'; caret.innerHTML = '&#9662;';
+      btn.appendChild(valSpan); btn.appendChild(caret);
+
+      var panel = document.createElement('div'); panel.className = 'combo-panel';
+      var search = null;
+      if (config.searchable) {
+        search = document.createElement('input');
+        search.type = 'text'; search.className = 'combo-search';
+        search.placeholder = config.searchPlaceholder || 'Search…';
+        panel.appendChild(search);
+      }
+      var optsWrap = document.createElement('div'); optsWrap.className = 'combo-opts';
+      panel.appendChild(optsWrap);
+      mount.appendChild(btn); mount.appendChild(panel);
+
+      function labelFor(v){
+        for (var i = 0; i < items.length; i++) if (items[i].value === v) return items[i].label;
+        return '';
+      }
+      function renderOpts(q){
+        optsWrap.innerHTML = '';
+        q = (q || '').toLowerCase();
+        var shown = 0;
+        items.forEach(function(it){
+          if (q && it.label.toLowerCase().indexOf(q) === -1) return;
+          shown++;
+          var opt = document.createElement('div');
+          opt.className = 'combo-opt' + (it.value === value ? ' sel' : '');
+          if (it.color) {
+            var dot = document.createElement('span'); dot.className = 'combo-dot';
+            dot.style.background = it.color; opt.appendChild(dot);
+          }
+          var txt = document.createElement('span'); txt.textContent = it.label; opt.appendChild(txt);
+          opt.addEventListener('click', function(){
+            setVal(it.value); close();
+            if (config.onChange) config.onChange(it.value);
+          });
+          optsWrap.appendChild(opt);
+        });
+        if (!shown) {
+          var none = document.createElement('div'); none.className = 'combo-none';
+          none.textContent = 'No matches'; optsWrap.appendChild(none);
+        }
+      }
+      function setVal(v){ value = v; valSpan.textContent = labelFor(v); renderOpts(search ? search.value : ''); }
+      function open(){
+        closeAllCombos();
+        mount.classList.add('open');
+        if (search) { search.value = ''; renderOpts(''); setTimeout(function(){ search.focus(); }, 0); }
+        pushHeight();
+      }
+      function close(){ mount.classList.remove('open'); }
+
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        if (mount.classList.contains('open')) close(); else open();
+      });
+      if (search) {
+        search.addEventListener('input', function(){ renderOpts(search.value); });
+        search.addEventListener('click', function(e){ e.stopPropagation(); });
+        search.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
+      }
+      panel.addEventListener('click', function(e){ e.stopPropagation(); });
+
+      setVal(value);
+      return { setValue: setVal, getValue: function(){ return value; }, close: close };
+    }
+
+    function buildFilters(){
+      var storeItems = [{ value: 'all', label: 'All stores' }];
+      var stores = (DATA.stores && DATA.stores.length)
+        ? DATA.stores.slice()
+        : DATA.events.map(function(e){ return e.store; });
+      stores.filter(function(v,i,a){ return a.indexOf(v) === i; })
+            .forEach(function(s){ storeItems.push({ value: s, label: s }); });
+      COMBOS.push(createCombo('storeCombo', {
+        items: storeItems, value: 'all', searchable: true, searchPlaceholder: 'Search stores…',
+        onChange: function(v){ filters.store = v; renderAll(); }
+      }));
+
+      var catItems = [{ value: 'all', label: 'All categories' }];
+      DATA.categories.forEach(function(c){ catItems.push({ value: c.name, label: c.name, color: c.color }); });
+      COMBOS.push(createCombo('catCombo', {
+        items: catItems, value: 'all', searchable: false,
+        onChange: function(v){ filters.category = v; renderAll(); }
+      }));
+    }
+
+    function wireEvents(){
+      document.getElementById('prevBtn').addEventListener('click', function(){
+        view = new Date(view.getFullYear(), view.getMonth() - 1, 1); renderAll();
+      });
+      document.getElementById('nextBtn').addEventListener('click', function(){
+        view = new Date(view.getFullYear(), view.getMonth() + 1, 1); renderAll();
+      });
+      document.getElementById('todayBtn').addEventListener('click', function(){
+        var t = todayDate(); view = new Date(t.getFullYear(), t.getMonth(), 1);
+        selectedKey = null; renderAll();
+      });
+      document.getElementById('tabList').addEventListener('click', function(){ setView('list'); });
+      document.getElementById('tabCal').addEventListener('click', function(){ setView('cal'); });
+      document.getElementById('searchInput').addEventListener('input', function(e){
+        filters.search = e.target.value.trim(); renderAll();
+      });
+    }
+
+    /* ===================== Boot ===================== */
+    function start(){
+      DATA.categories.forEach(function(c){ catColor[c.name] = c.color; });
+      var t = todayDate();
+      view = new Date(t.getFullYear(), t.getMonth(), 1); // open on the current month
+      buildFilters();
+      wireEvents();
+      renderAll();
+    }
+
+    fetch('events.json', { cache: 'no-store' })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(json){
+        DATA.categories = json.categories || [];
+        DATA.stores = json.stores || [];
+        DATA.events = json.events || [];
+        start();
+      })
+      .catch(function(err){
+        document.getElementById('feed').innerHTML =
+          '<div class="empty">We couldn\'t load the events right now. Please check back soon.</div>';
+        pushHeight();
+        console.error('events.json failed to load:', err);
+      });
+  </script>
 </body>
 </html>

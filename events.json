@@ -1,23 +1,212 @@
-[
-  {
-    "title": "Beer Den & SausageWorks Brats Pairing",
-    "location": "Store 12",
-    "start": "2026-03-08T17:30:00",
-    "end": "2026-03-08T19:00:00",
-    "description": "Try our new 'The Farmers Daughter' + get 10% off your next purchase."
-  },
-  {
-    "title": "Pick & Prep Charcuterie Tray Builds",
-    "location": "Store 7",
-    "start": "2026-03-14T10:00:00",
-    "end": "2026-03-14T11:30:00",
-    "description": "Free event. Supplies included while they last."
-  },
-  {
-    "title": "Breadcrumb Sourdough Bread Making",
-    "location": "Store 5",
-    "start": "2026-03-21T12:00:00",
-    "end": "2026-03-21T14:00:00",
-    "description": "Learn to make starter, and how to bake sourdough."
-  }
-]
+{
+  "_README": "Lowes Foods In-Store Events feed. Edit THIS file only — no HTML changes needed. STORES: add/remove locations in the 'stores' list. CATEGORIES: name + any hex color for the dot. EVENTS: one object each. date=YYYY-MM-DD, times=24h HH:MM (18:00=6:00 PM). 'category'/'store' must match the lists above exactly. 'icon' is the emoji shown in the round thumbnail. Optional: add \"image\":\"https://...\" to an event to show a real photo instead of the icon.",
+  "categories": [
+    {
+      "name": "Wine",
+      "color": "#004D7A"
+    },
+    {
+      "name": "Beer Den",
+      "color": "#FFC028"
+    },
+    {
+      "name": "Tastings",
+      "color": "#F26122"
+    },
+    {
+      "name": "Hands-On Class",
+      "color": "#0475BB"
+    }
+  ],
+  "stores": [
+    "Apex, NC — 5400 Apex Peakway",
+    "Archdale, NC — 10106 S Main Street, Suite A",
+    "Asheboro, NC — 737 West Dixie Drive",
+    "Banner Elk, NC — 4000 NC Highway 105 S",
+    "Bermuda Run, NC — Hwy 801 North, Suite 258",
+    "Bolivia, NC — 2829 Midway Road SE, Oak Island",
+    "Boone, NC — 267 New Market Centre",
+    "Burlington, NC — 1191 University Drive",
+    "Cape Carteret, NC — 321 WB McLean Drive",
+    "Cary, NC — 6430 Tryon Road",
+    "Cary, NC — 687 Mills Park Drive",
+    "Cary, NC — 930 High House Road",
+    "Chapel Hill, NC — 11312 Highway 15 501 N.",
+    "Chapin, SC — 1419 Chapin Road",
+    "Charleston, SC — 3125 Bees Ferry Road",
+    "Clayton, NC — 11711 US Highway 70 Business West",
+    "Clemmons, NC — 2501 Lewisville-Clemmons Rd",
+    "Columbia, SC — 120 Forum Drive",
+    "Columbia, SC — 4711 Forest Drive",
+    "Denton, NC — 17525 S. Highway 109",
+    "Garner, NC — 1845 Aversboro Road",
+    "Greensboro, NC — 1581 New Garden Road",
+    "Greensboro, NC — 5820F North Church Street",
+    "Greensboro, NC — 6310 Old Oak Ridge Rd., Suite G",
+    "Greenville, SC — 3619 Pelham Road",
+    "Greer, SC — 850 East Suber Road, Suite 200",
+    "Hampstead, NC — 17230 US Hwy 17",
+    "Hanahan, SC — 1000 Tanner Ford Boulevard, Suite 726",
+    "Harrisburg, NC — 4445 School House Commons",
+    "Hickory, NC — 260 14th Avenue NE",
+    "Hickory, NC — 2631 NC Hwy 127 South",
+    "Hickory, NC — 3010-A N. Center Street",
+    "Hickory, NC — 9441 NC Highway 127",
+    "Holly Springs, NC — 112 Bass Lake Road",
+    "Jacksonville, NC — 2421 Gum Branch Road, Unit 200",
+    "Jamestown, NC — 1236 Guilford College Road",
+    "Kernersville, NC — 240 Market View Drive",
+    "King, NC — 614-G South Main Street",
+    "Knightdale, NC — 3001 Widewaters Parkway",
+    "Leland, NC — 1152 East Cutlar Crossing",
+    "Lewisville, NC — 177 Lowes Foods Drive",
+    "Lexington, SC — 2440 Augusta Highway",
+    "Lexington, SC — 5222 Sunset Blvd.",
+    "Little River, SC — 111 Pavilion Drive, Suite #10",
+    "Mebane, NC — 1020 Mebane Oaks Rd",
+    "Mooresville, NC — 125 Center Square Drive",
+    "Morehead City, NC — 2900 Arendell Street, Unit #2",
+    "Mt. Airy, NC — 715 Independence Boulevard",
+    "Mt. Pleasant, SC — 2110 SC Highway 41",
+    "Murrells Inlet, SC — 11903 Hwy 707",
+    "Myrtle Beach, SC — 1399 S. Commons Drive",
+    "Myrtle Beach, SC — 215 Fresh Drive",
+    "Oak Ridge, NC — 2205 Oak Ridge Road, Suite B",
+    "Ocean Isle Beach, NC — 6278 Beach Drive, Unit 5",
+    "Pawleys Island, SC — 9160 Ocean Highway",
+    "Pinehurst, NC — 266 Central Park Avenue",
+    "Pittsboro, NC — 65 Ramseur Rd Suite 100",
+    "Raleigh, NC — 7281 NC Hwy 42 West",
+    "Raleigh, NC — 8100 Brier Creek Parkway",
+    "Raleigh, NC — 8440 Louisburg Road, Suite 110, Rolesville",
+    "Raleigh, NC — 9600 Strickland Road",
+    "Reidsville, NC — 1537 Freeway Drive",
+    "Sanford, NC — 818 Spring Lane",
+    "Simpsonville, SC — 2815 Woodruff Rd",
+    "Southern Pines, NC — 1740 Old Morganton Road",
+    "Southport, NC — 5011 Southport Crossing Way",
+    "Summerville, SC — 10048 Dorchester Road",
+    "Wake Forest, NC — 12524 Capital Blvd.",
+    "Wake Forest, NC — 932 Gateway Commons Circle",
+    "Walkertown, NC — 5180 Reidsville Road",
+    "Wilkesboro, NC — 1826 W US Highway 421 Suite C",
+    "Wilmington, NC — 2316 North College Road",
+    "Wilmington, NC — 341 South College Road",
+    "Wilmington, NC — 5309 Carolina Beach Road",
+    "Winston-Salem, NC — 2890 Reynolda Rd",
+    "Winston-Salem, NC — 3372 Robinhood Road",
+    "Winston-Salem, NC — 5034 Peters Creek Pkwy"
+  ],
+  "events": [
+    {
+      "id": "evt-001",
+      "name": "Wine & Cheese Pairing",
+      "icon": "🍷",
+      "category": "Wine",
+      "store": "Pinehurst, NC — 266 Central Park Avenue",
+      "date": "2026-06-12",
+      "start": "18:00",
+      "end": "19:30",
+      "description": "Pull up a chair, neighbor. Our cheese guides pour four local-friendly wines and pair each with a hand-cut cheese — you bring the curiosity, we'll bring the twist."
+    },
+    {
+      "id": "evt-002",
+      "name": "Beer & Brats",
+      "icon": "🍺",
+      "category": "Beer Den",
+      "store": "Denton, NC — 17525 S. Highway 109",
+      "date": "2026-06-14",
+      "start": "17:00",
+      "end": "18:30",
+      "description": "Cold pours from the Beer Den meet sizzling brats off the grill. A laid-back evening of craft taps, good eats, and even better company."
+    },
+    {
+      "id": "evt-003",
+      "name": "Coffee Flights & Bites",
+      "icon": "☕",
+      "category": "Tastings",
+      "store": "Cary, NC — 930 High House Road",
+      "date": "2026-06-20",
+      "start": "10:00",
+      "end": "11:00",
+      "description": "Three roasts, three little bites, one bright morning. Sip your way through a guided coffee flight and find your new everyday cup."
+    },
+    {
+      "id": "evt-004",
+      "name": "Cake Decorating 101",
+      "icon": "🧁",
+      "category": "Hands-On Class",
+      "store": "Wilmington, NC — 341 South College Road",
+      "date": "2026-06-25",
+      "start": "18:00",
+      "end": "19:30",
+      "description": "Frosting tips, piping bags, and zero judgment. Our bakery team walks you through the basics — you'll leave with a cake you decorated (and maybe a new hobby)."
+    },
+    {
+      "id": "evt-005",
+      "name": "Smokehouse Tapas & Taps",
+      "icon": "🍖",
+      "category": "Beer Den",
+      "store": "Mt. Pleasant, SC — 2110 SC Highway 41",
+      "date": "2026-06-27",
+      "start": "18:30",
+      "end": "20:00",
+      "description": "Low-and-slow smokehouse small plates paired with hand-picked taps. Pull up to the table and graze your way through the best of the Beer Den."
+    },
+    {
+      "id": "evt-006",
+      "name": "Tea Parties",
+      "icon": "🫖",
+      "category": "Hands-On Class",
+      "store": "Holly Springs, NC — 112 Bass Lake Road",
+      "date": "2026-07-02",
+      "start": "15:00",
+      "end": "16:00",
+      "description": "A proper afternoon tea with a homegrown twist — loose-leaf brews, finger sandwiches, and sweets. Bring the little ones or just your best teacup."
+    },
+    {
+      "id": "evt-007",
+      "name": "Floral Arranging & Wine",
+      "icon": "💐",
+      "category": "Hands-On Class",
+      "store": "Cary, NC — 930 High House Road",
+      "date": "2026-07-10",
+      "start": "18:00",
+      "end": "19:30",
+      "description": "Glass in one hand, garden shears in the other. Build a seasonal arrangement with our floral team while you sip — fresh blooms, fresh fun."
+    },
+    {
+      "id": "evt-008",
+      "name": "Cheer Box Pairing",
+      "icon": "🎁",
+      "category": "Tastings",
+      "store": "Pinehurst, NC — 266 Central Park Avenue",
+      "date": "2026-07-10",
+      "start": "17:00",
+      "end": "18:30",
+      "description": "Our curated Cheer Box, unboxed and paired bite-by-bite. A guided tasting of local snacks and treats worth gathering 'round the table for."
+    },
+    {
+      "id": "evt-009",
+      "name": "Wine & Cheese Pairing",
+      "icon": "🍷",
+      "category": "Wine",
+      "store": "Wilmington, NC — 341 South College Road",
+      "date": "2026-07-18",
+      "start": "18:00",
+      "end": "19:30",
+      "description": "Back by popular demand. Four pours, four cheeses, and the easy conversation that comes with them — all served with a twist of wit."
+    },
+    {
+      "id": "evt-010",
+      "name": "Coffee Flights & Bites",
+      "icon": "☕",
+      "category": "Tastings",
+      "store": "Denton, NC — 17525 S. Highway 109",
+      "date": "2026-07-25",
+      "start": "10:00",
+      "end": "11:00",
+      "description": "Start your Saturday the homegrown way. A guided flight of fresh roasts with sweet and savory bites to match each cup."
+    }
+  ]
+}

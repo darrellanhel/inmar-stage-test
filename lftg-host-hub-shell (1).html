@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>LFTG Host Hub — Design Shell</title>
+<style>
+  :root{
+    --lf-green:#006428;
+    --lf-green-2:#369344;
+    --lf-green-dark:#003f1c;
+    --tan:#FFFAF8;
+    --ink:#171616;
+    --muted:#5c685e;
+    --line:#e3e1d8;
+    --line-strong:#BAB9AD;
+    --orange:#F26122;
+    --gold:#FFC028;
+    --blue:#0475BB;
+    --paper:#ffffff;
+    --bg:#f4f1ea;
+    --shadow:0 6px 22px rgba(0,49,21,.10);
+    --shadow-lg:0 16px 40px rgba(0,49,21,.18);
+    --radius:18px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --tan:#1c211d;
+      --ink:#eef2ec;
+      --muted:#a9b4ab;
+      --line:#33402f;
+      --line-strong:#46543f;
+      --paper:#222823;
+      --bg:#161a16;
+      --shadow:0 6px 22px rgba(0,0,0,.45);
+      --shadow-lg:0 16px 40px rgba(0,0,0,.55);
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,"Franklin Gothic Book","Arial",sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin-inline:auto;padding-inline:22px;}
+  h1,h2,h3,.eyebrow,.tile h3,.navlink{font-family:"Franklin Gothic Medium","Segoe UI Semibold","Arial Narrow",Arial,sans-serif;}
+  .eyebrow{
+    text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;
+    color:var(--lf-green-2);margin:0 0 8px;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(180deg,var(--lf-green) 0%,var(--lf-green-dark) 130%);
+    box-shadow:0 2px 14px rgba(0,40,18,.30);
+  }
+  .topbar .wrap{display:flex;align-items:center;gap:18px;height:64px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .wordmark{display:inline-block;background:#fff;border-radius:8px;padding:6px 12px;font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:700;font-size:19px;color:var(--lf-green);line-height:1;white-space:nowrap;}
+  .brand .ht{color:#fff;font-weight:700;font-size:15px;line-height:1.1;letter-spacing:.02em;}
+  .brand .ht small{display:block;font-weight:400;font-size:11px;opacity:.82;letter-spacing:.16em;text-transform:uppercase;}
+  .nav{display:flex;gap:4px;margin-inline-start:auto;flex-wrap:wrap;}
+  .navlink{
+    color:#eafff1;font-size:13.5px;font-weight:600;padding:8px 13px;border-radius:9px;
+    text-transform:uppercase;letter-spacing:.04em;transition:background .15s;
+  }
+  .navlink:hover{background:rgba(255,255,255,.16);}
+  .navlink.active{background:#fff;color:var(--lf-green);}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;color:#fff;overflow:hidden;
+    background:
+      radial-gradient(1200px 380px at 80% -40%, rgba(54,147,68,.55), transparent 60%),
+      linear-gradient(135deg,#0a7635 0%,var(--lf-green) 45%,var(--lf-green-dark) 100%);
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;opacity:.10;
+    background-image:repeating-linear-gradient(90deg,#fff 0 2px,transparent 2px 64px);
+    pointer-events:none;
+  }
+  .hero .wrap{position:relative;padding:46px 22px 40px;}
+  .hero .eyebrow{color:var(--gold);}
+  .hero h1{font-size:42px;line-height:1.05;margin:0 0 12px;max-width:760px;text-transform:uppercase;letter-spacing:.01em;}
+  .hero p.lede{font-size:18px;max-width:620px;margin:0 0 22px;opacity:.95;font-family:Georgia,"Times New Roman",serif;}
+  .search{
+    display:flex;align-items:center;gap:10px;background:#fff;border-radius:999px;
+    padding:7px 8px 7px 18px;max-width:560px;box-shadow:var(--shadow-lg);
+  }
+  .search svg{flex:0 0 auto;}
+  .search input{
+    border:0;outline:0;font-size:15px;flex:1;color:var(--ink);background:transparent;
+    font-family:inherit;
+  }
+  .search .go{
+    background:var(--orange);color:#fff;border:0;border-radius:999px;padding:10px 20px;
+    font-weight:700;font-size:14px;cursor:pointer;text-transform:uppercase;letter-spacing:.03em;
+  }
+  .today{display:flex;gap:26px;flex-wrap:wrap;margin-top:26px;}
+  .today .stat{display:flex;flex-direction:column;}
+  .today .stat b{font-size:24px;font-family:"Franklin Gothic Medium",Arial,sans-serif;}
+  .today .stat span{font-size:12px;text-transform:uppercase;letter-spacing:.1em;opacity:.85;}
+  .today .divider{width:1px;background:rgba(255,255,255,.3);}
+
+  /* ---------- Section scaffolding ---------- */
+  section.block{padding:42px 0 6px;}
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;}
+  .sec-head h2{font-size:25px;margin:0;text-transform:uppercase;letter-spacing:.01em;color:var(--lf-green);}
+  .sec-head .seeall{font-size:13px;font-weight:700;color:var(--lf-green-2);text-transform:uppercase;letter-spacing:.05em;}
+  .rule{height:3px;width:54px;background:var(--gold);border-radius:3px;margin-top:6px;}
+
+  /* ---------- Quick-launch tiles ---------- */
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .tile{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+    transition:transform .16s,box-shadow .16s,border-color .16s;display:block;
+  }
+  .tile:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--lf-green-2);}
+  .tile .ico{
+    width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+    margin-bottom:14px;color:#fff;
+  }
+  .tile h3{font-size:17px;margin:0 0 5px;color:var(--ink);text-transform:uppercase;letter-spacing:.02em;}
+  .tile p{margin:0;font-size:13.5px;color:var(--muted);}
+  .tile .pill{position:absolute;top:16px;inset-inline-end:16px;font-size:10.5px;font-weight:800;
+    text-transform:uppercase;letter-spacing:.06em;color:var(--orange);background:#fff1ea;
+    padding:3px 9px;border-radius:999px;}
+  .ic-green{background:linear-gradient(135deg,#0a7635,var(--lf-green));}
+  .ic-blue{background:linear-gradient(135deg,#0a8ad6,var(--blue));}
+  .ic-orange{background:linear-gradient(135deg,#ff7a3c,var(--orange));}
+  .ic-gold{background:linear-gradient(135deg,#ffcf4d,#e3a200);}
+  .ic-green2{background:linear-gradient(135deg,#4cb85c,var(--lf-green-2));}
+  .ic-ink{background:linear-gradient(135deg,#3b4a40,#243029);}
+
+  /* ---------- News / What's Fresh ---------- */
+  .news{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform .16s,box-shadow .16s;}
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+  .card .band{height:7px;}
+  .card .body{padding:18px 18px 20px;}
+  .tag{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding:3px 9px;border-radius:999px;margin-bottom:10px;}
+  .tag.new{background:#fff1ea;color:var(--orange);}
+  .tag.sop{background:#e8f3ec;color:var(--lf-green);}
+  .tag.win{background:#fff7e0;color:#b07d00;}
+  .card h3{font-size:16px;margin:0 0 6px;color:var(--ink);}
+  .card .meta{font-size:12px;color:var(--muted);margin:10px 0 0;}
+
+  /* ---------- Two column ---------- */
+  .cols{display:grid;grid-template-columns:1.9fr 1fr;gap:22px;align-items:start;}
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  .panel .ph{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;}
+  .panel .ph h3{margin:0;font-size:15px;text-transform:uppercase;letter-spacing:.03em;color:var(--lf-green);}
+  .spotlight{display:flex;gap:18px;padding:20px;align-items:center;}
+  .spotlight .art{
+    flex:0 0 120px;height:120px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;
+    background:radial-gradient(120px 80px at 30% 20%,rgba(255,255,255,.25),transparent),linear-gradient(135deg,var(--lf-green-2),var(--lf-green));
+  }
+  .spotlight h4{margin:0 0 6px;font-size:18px;color:var(--ink);}
+  .spotlight p{margin:0 0 12px;font-size:14px;color:var(--muted);}
+  .btn{display:inline-block;background:var(--lf-green);color:#fff;font-weight:700;font-size:13px;
+    padding:9px 18px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;}
+  .btn.alt{background:var(--orange);}
+  .tip{padding:18px 20px;background:linear-gradient(135deg,#fffaf0,#fff6e2);border-top:1px solid var(--line);}
+  .tip .q{font-family:Georgia,serif;font-style:italic;font-size:15.5px;color:#5a4a14;}
+
+  .links{list-style:none;margin:0;padding:6px;}
+  .links li a{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:11px;font-size:14px;font-weight:600;color:var(--ink);transition:background .14s;}
+  .links li a:hover{background:#eef6f0;}
+  .links .dot{width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;}
+  .links .arr{margin-inline-start:auto;color:var(--line-strong);}
+
+  /* ---------- Recognition ---------- */
+  .stars{
+    border-radius:24px;color:#fff;padding:34px 30px;margin-top:8px;position:relative;overflow:hidden;
+    background:radial-gradient(700px 300px at 90% -30%,rgba(255,192,40,.30),transparent 60%),linear-gradient(135deg,var(--lf-green) 0%,var(--lf-green-dark) 100%);
+  }
+  .stars h2{margin:0 0 4px;font-size:26px;text-transform:uppercase;letter-spacing:.02em;}
+  .stars .sub{font-family:Georgia,serif;opacity:.9;margin:0 0 22px;}
+  .stargrid{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:18px;}
+  .glass{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:18px;backdrop-filter:blur(2px);}
+  .glass .lab{font-size:11px;text-transform:uppercase;letter-spacing:.12em;opacity:.85;margin-bottom:10px;}
+  .hostchip{display:flex;align-items:center;gap:13px;}
+  .avatar{width:54px;height:54px;border-radius:50%;background:var(--gold);color:#3a2d00;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,.6);}
+  .hostchip b{font-size:17px;}
+  .hostchip span{font-size:12.5px;opacity:.85;display:block;}
+  .lead{list-style:none;margin:0;padding:0;}
+  .lead li{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:14px;border-bottom:1px solid rgba(255,255,255,.14);}
+  .lead li:last-child{border-bottom:0;}
+  .rank{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.2);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .rank.g{background:var(--gold);color:#3a2d00;}
+  .lead .pct{margin-inline-start:auto;font-weight:800;}
+  .badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+  .badge{display:flex;flex-direction:column;align-items:center;gap:6px;width:72px;text-align:center;}
+  .badge .bz{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);}
+  .badge span{font-size:10.5px;line-height:1.2;opacity:.92;}
+
+  /* ---------- Footer ---------- */
+  footer{margin-top:46px;background:var(--lf-green-dark);color:#dff0e5;}
+  footer .wrap{padding:30px 22px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;}
+  footer .wordmark{display:inline-block;background:#fff;border-radius:7px;padding:6px 11px;font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:700;font-size:18px;color:var(--lf-green);line-height:1;white-space:nowrap;}
+  footer .tagline{font-family:Georgia,serif;font-style:italic;font-size:15px;opacity:.92;}
+  footer .fl{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;}
+  footer .fl a:hover{color:#fff;}
+
+  .note{max-width:1180px;margin:18px auto 0;padding:12px 22px;font-size:12px;color:var(--muted);}
+
+  @media(max-width:920px){
+    .tiles,.news{grid-template-columns:repeat(2,1fr);}
+    .cols{grid-template-columns:1fr;}
+    .stargrid{grid-template-columns:1fr;}
+    .hero h1{font-size:32px;}
+    .nav{display:none;}
+  }
+  @media(max-width:560px){
+    .tiles,.news{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#">
+      <span class="wordmark">Lowes Foods</span>
+      <span class="ht">Host Hub<small>Lowes Foods To Go</small></span>
+    </a>
+    <nav class="nav">
+      <a class="navlink active" href="#">Home</a>
+      <a class="navlink" href="#tiles">SOPs</a>
+      <a class="navlink" href="#tiles">Training</a>
+      <a class="navlink" href="#tiles">Marketing</a>
+      <a class="navlink" href="#tiles">Reports</a>
+      <a class="navlink" href="#links">Help</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Welcome to the front porch</p>
+    <h1>Everything an LFTG host needs — all in one place.</h1>
+    <p class="lede">Grab a SOP, knock out a training, pull the latest signage, or check your store's numbers. Then get back to wowing guests at the curb.</p>
+    <div class="search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#006428" stroke-width="2"/><path d="M21 21l-4-4" stroke="#006428" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Search SOPs, training, signage, reports…" aria-label="Search the Host Hub">
+      <button class="go" type="button">Search</button>
+    </div>
+    <div class="today">
+      <div class="stat"><b>12</b><span>How-To SOPs</span></div>
+      <div class="divider"></div>
+      <div class="stat"><b>5</b><span>Trainings live</span></div>
+      <div class="divider"></div>
+      <div class="stat"><b>New</b><span>June signage drop</span></div>
+      <div class="divider"></div>
+      <div class="stat"><b>98.4%</b><span>On-time pick rate</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK LAUNCH -->
+<section class="block" id="tiles">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Jump right in</p>
+        <h2>What do you need today?</h2>
+        <div class="rule"></div>
+      </div>
+    </div>
+    <div class="tiles">
+      <a class="tile" href="#">
+        <div class="ico ic-green"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M6 3h9l5 5v13H6z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v6h6M9 13h7M9 17h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>SOPs &amp; How-To</h3>
+        <p>Step-by-step standards for picking, staging, substitutions, and curbside handoff.</p>
+      </a>
+      <a class="tile" href="#">
+        <div class="ico ic-blue"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M3 7l9-4 9 4-9 4-9-4z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M7 9v5c0 1.5 2.5 3 5 3s5-1.5 5-3V9" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Training &amp; Onboarding</h3>
+        <p>New-host ramp-up, refreshers, and certifications — track what's done.</p>
+        <span class="pill">2 new</span>
+      </a>
+      <a class="tile" href="#">
+        <div class="ico ic-orange"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M3 9v6h4l6 4V5L7 9H3z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M17 9a4 4 0 010 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Marketing &amp; Signage</h3>
+        <p>Print-ready curbside signs, social kits, and seasonal promo material.</p>
+        <span class="pill">June drop</span>
+      </a>
+      <a class="tile" href="#">
+        <div class="ico ic-gold"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Reports &amp; Dashboards</h3>
+        <p>Pick rate, on-time, substitutions, and store scorecards — one click away.</p>
+      </a>
+      <a class="tile" href="#">
+        <div class="ico ic-green2"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M3 6h13l4 4v8H3z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><circle cx="7.5" cy="18.5" r="1.8" stroke="#fff" stroke-width="2"/><circle cx="16.5" cy="18.5" r="1.8" stroke="#fff" stroke-width="2"/></svg></div>
+        <h3>Fulfillment Tools</h3>
+        <p>App guides, device help, and the order-staging workflow cheat sheet.</p>
+      </a>
+      <a class="tile" href="#">
+        <div class="ico ic-ink"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><path d="M9.5 9.5a2.5 2.5 0 113.5 2.3c-.7.4-1 .8-1 1.7M12 17h.01" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Help &amp; Support</h3>
+        <p>Who to call, escalation paths, and the Curbside Service Center.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S FRESH -->
+<section class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">News from the table</p>
+        <h2>What's Fresh</h2>
+        <div class="rule"></div>
+      </div>
+      <a class="seeall" href="#">See all news →</a>
+    </div>
+    <div class="news">
+      <article class="card">
+        <div class="band" style="background:var(--orange)"></div>
+        <div class="body">
+          <span class="tag new">New this week</span>
+          <h3>June curbside signage is live</h3>
+          <p style="font-size:13.5px;color:var(--muted);margin:0;">Fresh summer porch signs and tote toppers — print from the Marketing library.</p>
+          <p class="meta">Posted Jun 18 · Marketing Team</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="band" style="background:var(--lf-green)"></div>
+        <div class="body">
+          <span class="tag sop">SOP update</span>
+          <h3>Updated substitution guidelines</h3>
+          <p style="font-size:13.5px;color:var(--muted);margin:0;">New guest-first sub rules for out-of-stocks. Two-minute read, big impact.</p>
+          <p class="meta">Posted Jun 16 · Operations</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="band" style="background:var(--gold)"></div>
+        <div class="body">
+          <span class="tag win">Host win</span>
+          <h3>Clemmons hits 99.6% on-time</h3>
+          <p style="font-size:13.5px;color:var(--muted);margin:0;">Shout-out to the Clemmons crew for the best curbside week in the region.</p>
+          <p class="meta">Posted Jun 15 · Host Hub</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- TWO COLUMN -->
+<section class="block">
+  <div class="wrap">
+    <div class="cols">
+      <!-- left -->
+      <div>
+        <div class="panel">
+          <div class="ph"><h3>Training Spotlight</h3></div>
+          <div class="spotlight">
+            <div class="art"><svg width="46" height="46" viewBox="0 0 24 24" fill="none"><path d="M5 4h14v14H5z" stroke="#fff" stroke-width="2"/><path d="M8 4v14M5 9h3M5 13h3" stroke="#fff" stroke-width="2"/><path d="M11 9h5M11 12h5M11 15h3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div>
+              <span class="tag sop" style="background:#e8f3ec;color:var(--lf-green)">Featured · 8 min</span>
+              <h4>The Perfect Curbside Handoff</h4>
+              <p>Greet, confirm, load, and send them off smiling. The micro-moments that turn a pickup into a "wow."</p>
+              <a class="btn" href="#">Start training</a>
+            </div>
+          </div>
+          <div class="tip">
+            <p class="eyebrow" style="color:#b07d00">Host tip of the week</p>
+            <p class="q">"Stage cold items last and call them out at the car — guests notice when their ice cream is still frozen."</p>
+          </div>
+        </div>
+      </div>
+      <!-- right -->
+      <div id="links">
+        <div class="panel">
+          <div class="ph"><h3>Quick Links</h3></div>
+          <ul class="links">
+            <li><a href="#"><span class="dot" style="background:var(--lf-green)">★</span>Curbside Service Center<span class="arr">→</span></a></li>
+            <li><a href="#"><span class="dot" style="background:var(--blue)">⛑</span>Lowes Help Desk<span class="arr">→</span></a></li>
+            <li><a href="#"><span class="dot" style="background:var(--orange)">📊</span>Store Scorecard<span class="arr">→</span></a></li>
+            <li><a href="#"><span class="dot" style="background:var(--lf-green-2)">📦</span>Product Locator<span class="arr">→</span></a></li>
+            <li><a href="#"><span class="dot" style="background:#b07d00">🎟</span>Digital Coupon Hub<span class="arr">→</span></a></li>
+          </ul>
+        </div>
+        <div class="panel" style="margin-top:18px;">
+          <div class="ph"><h3>New in the Library</h3></div>
+          <ul class="links">
+            <li><a href="#"><span class="dot" style="background:var(--lf-green)">PDF</span>Summer Tote Topper.pdf<span class="arr">→</span></a></li>
+            <li><a href="#"><span class="dot" style="background:var(--lf-green)">DOC</span>Substitution SOP v3<span class="arr">→</span></a></li>
+            <li><a href="#"><span class="dot" style="background:var(--lf-green)">XLS</span>June Pick-Rate Tracker<span class="arr">→</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECOGNITION -->
+<section class="block">
+  <div class="wrap">
+    <div class="stars">
+      <h2>Host All-Stars 🌟</h2>
+      <p class="sub">Because great curbside is a team sport. Celebrate the neighbors going above and beyond.</p>
+      <div class="stargrid">
+        <div class="glass">
+          <div class="lab">Host of the Month</div>
+          <div class="hostchip">
+            <div class="avatar">[ ]</div>
+            <div>
+              <b>[Host Name]</b>
+              <span>[Store / Location]</span>
+            </div>
+          </div>
+          <p style="font-size:13px;opacity:.9;margin:14px 0 0;">"[One line on what made them a standout this month.]"</p>
+        </div>
+        <div class="glass">
+          <div class="lab">Region on-time leaderboard</div>
+          <ul class="lead">
+            <li><span class="rank g">1</span>Clemmons<span class="pct">99.6%</span></li>
+            <li><span class="rank">2</span>Lewisville<span class="pct">99.1%</span></li>
+            <li><span class="rank">3</span>Cary Parkway<span class="pct">98.8%</span></li>
+            <li><span class="rank">4</span>Friendly Center<span class="pct">98.5%</span></li>
+          </ul>
+        </div>
+        <div class="glass">
+          <div class="lab">Earn your badges</div>
+          <div class="badges">
+            <div class="badge"><div class="bz">⚡</div><span>Speed Picker</span></div>
+            <div class="badge"><div class="bz">🤝</div><span>Guest Hero</span></div>
+            <div class="badge"><div class="bz">🎓</div><span>Fully Certified</span></div>
+            <div class="badge"><div class="bz">🥬</div><span>Fresh First</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <span class="wordmark">Lowes Foods</span>
+    <span class="tagline">Bringing your community back to the table.</span>
+    <div class="fl">
+      <a href="#">SOPs</a><a href="#">Training</a><a href="#">Marketing</a><a href="#">Reports</a><a href="#">Help</a>
+    </div>
+  </div>
+</footer>
+
+<p class="note">Design shell / concept mockup for the Lowes Foods To Go Host Hub. Numbers, names, and links shown are placeholders to illustrate layout. Built in Lowes Foods brand colors and voice.</p>
+
+</body>
+</html>
